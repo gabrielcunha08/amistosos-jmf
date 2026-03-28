@@ -5,12 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Grêmio JMF - Amistosos • Abril 2026</title>
     <style>
-        /* ========== RESET E ESTILOS GLOBAIS ========== */
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: system-ui, 'Segoe UI', 'Roboto', 'Helvetica Neue', sans-serif;
+            font-family: system-ui, 'Segoe UI', 'Roboto', sans-serif;
         }
 
         body {
@@ -20,13 +19,11 @@
             min-height: 100vh;
         }
 
-        /* ========== CONTAINER PRINCIPAL ========== */
         .app-container {
             max-width: 1400px;
             margin: 0 auto;
         }
 
-        /* ========== CABEÇALHO ========== */
         .header {
             text-align: center;
             margin-bottom: 2rem;
@@ -36,12 +33,10 @@
 
         .header h1 {
             font-size: 1.8rem;
-            letter-spacing: -0.5px;
             background: linear-gradient(135deg, #b9f6ca, #2ecc71);
             background-clip: text;
             -webkit-background-clip: text;
             color: transparent;
-            text-shadow: 0 2px 5px rgba(0,0,0,0.2);
         }
 
         .month-indicator {
@@ -65,13 +60,25 @@
             color: #b9f6ca;
         }
 
-        .header p {
-            color: #7f8c8d;
-            font-size: 0.85rem;
-            margin-top: 6px;
+        .status-bar {
+            background: #1e2a2a;
+            padding: 8px;
+            border-radius: 20px;
+            margin: 10px auto;
+            max-width: 350px;
+            font-size: 0.7rem;
+            text-align: center;
         }
 
-        /* ========== CALENDÁRIO EM GRID ========== */
+        .status-bar.connected {
+            color: #2ecc71;
+            background: #1a3a2a;
+        }
+
+        .status-bar.saving {
+            color: #f1c40f;
+        }
+
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
@@ -79,13 +86,12 @@
             margin-top: 1rem;
         }
 
-        /* ========== CARD DE CADA DIA ========== */
         .day-card {
             background: #11181c;
             border-radius: 1.5rem;
             padding: 1rem;
             box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-            transition: transform 0.1s ease, box-shadow 0.2s;
+            transition: transform 0.1s ease;
             border-left: 4px solid #2ecc71;
             display: flex;
             flex-direction: column;
@@ -93,12 +99,10 @@
 
         .day-card.occupied {
             border-left: 4px solid #e67e22;
-            opacity: 0.95;
         }
 
         .day-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 24px rgba(46,204,113,0.15);
             background: #15232b;
         }
 
@@ -144,12 +148,10 @@
             color: white;
         }
 
-        /* ========== LISTA DE JOGOS ========== */
         .matches-list {
             flex: 1;
             min-height: 70px;
             margin: 12px 0;
-            padding-right: 4px;
         }
 
         .match-item {
@@ -158,8 +160,6 @@
             padding: 10px;
             font-size: 0.75rem;
             border-left: 3px solid #2ecc71;
-            word-break: break-word;
-            position: relative;
         }
 
         .match-text {
@@ -193,14 +193,13 @@
             font-size: 0.7rem;
             color: white;
             cursor: pointer;
-            transition: 0.2s;
             width: 100%;
             margin-top: 6px;
+            transition: 0.2s;
         }
 
         .btn-cancel-match:hover {
             background: #e74c3c;
-            transform: scale(0.98);
         }
 
         .empty-matches {
@@ -211,7 +210,6 @@
             font-style: italic;
         }
 
-        /* ========== BOTÃO MARCAR ========== */
         .btn-marcar {
             background: #1f3a34;
             border: none;
@@ -221,85 +219,22 @@
             color: #b9f6ca;
             font-size: 0.8rem;
             cursor: pointer;
-            transition: 0.2s;
             margin-top: 8px;
             width: 100%;
-            text-align: center;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
+            transition: 0.2s;
         }
 
         .btn-marcar:hover:not(:disabled) {
             background: #2e7d64;
             color: white;
-            transform: scale(0.98);
         }
 
         .btn-marcar:disabled {
             opacity: 0.5;
             cursor: not-allowed;
-            background: #3a4a4a;
         }
 
-        /* ========== MODAL DE CONFIRMAÇÃO ========== */
-        .confirm-modal {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: rgba(0, 0, 0, 0.9);
-            backdrop-filter: blur(4px);
-            align-items: center;
-            justify-content: center;
-            z-index: 1001;
-        }
-
-        .confirm-modal-content {
-            background: #0f1a1c;
-            border-radius: 2rem;
-            width: 90%;
-            max-width: 350px;
-            padding: 1.5rem;
-            border-top: 4px solid #e74c3c;
-            text-align: center;
-        }
-
-        .confirm-modal-content h4 {
-            color: #e74c3c;
-            margin-bottom: 1rem;
-        }
-
-        .confirm-buttons {
-            display: flex;
-            gap: 12px;
-            margin-top: 20px;
-        }
-
-        .confirm-buttons button {
-            flex: 1;
-            padding: 10px;
-            border-radius: 40px;
-            border: none;
-            font-weight: bold;
-            cursor: pointer;
-        }
-
-        .btn-confirm-cancel {
-            background: #e74c3c;
-            color: white;
-        }
-
-        .btn-confirm-keep {
-            background: #2ecc71;
-            color: #0a0f0f;
-        }
-
-        /* ========== MODAL FORMULÁRIO ========== */
-        .modal {
+        .modal, .confirm-modal {
             display: none;
             position: fixed;
             top: 0;
@@ -313,20 +248,17 @@
             z-index: 1000;
         }
 
-        .modal-content {
+        .modal-content, .confirm-modal-content {
             background: #0f1a1c;
             border-radius: 2rem;
             width: 90%;
             max-width: 400px;
             padding: 1.6rem;
             border-top: 4px solid #2ecc71;
-            box-shadow: 0 25px 40px rgba(0,0,0,0.6);
-            animation: fadeInUp 0.2s ease;
         }
 
-        .modal-content h3 {
-            color: #2ecc71;
-            margin-bottom: 1rem;
+        .confirm-modal-content {
+            border-top-color: #e74c3c;
             text-align: center;
         }
 
@@ -334,7 +266,7 @@
             background: #2c3e2e;
             padding: 8px;
             border-radius: 16px;
-            margin-bottom: 15px;
+            margin: 15px 0;
             font-size: 0.75rem;
             text-align: center;
             color: #f1c40f;
@@ -363,20 +295,19 @@
             cursor: pointer;
         }
 
-        .modal-buttons {
+        .modal-buttons, .confirm-buttons {
             display: flex;
             gap: 12px;
             margin-top: 20px;
         }
 
-        .modal-buttons button {
+        .modal-buttons button, .confirm-buttons button {
             flex: 1;
             padding: 10px;
             border-radius: 40px;
             border: none;
             font-weight: bold;
             cursor: pointer;
-            transition: 0.2s;
         }
 
         .btn-confirm {
@@ -384,18 +315,14 @@
             color: #0a0f0f;
         }
 
-        .btn-confirm:hover {
-            background: #27ae60;
-            transform: scale(0.98);
-        }
-
         .btn-cancel {
             background: #3a4a4a;
             color: #ddd;
         }
 
-        .btn-cancel:hover {
-            background: #4a5a5a;
+        .btn-confirm-cancel {
+            background: #e74c3c;
+            color: white;
         }
 
         .error-msg {
@@ -413,35 +340,15 @@
             padding: 1rem;
         }
 
-        @keyframes fadeInUp {
-            from {
-                opacity: 0;
-                transform: translateY(20px);
-            }
-            to {
-                opacity: 1;
-                transform: translateY(0);
-            }
+        @media (max-width: 640px) {
+            body { padding: 0.8rem; }
+            .day-card { padding: 0.8rem; }
         }
 
-        /* ========== RESPONSIVIDADE ========== */
-        @media (max-width: 640px) {
-            body {
-                padding: 0.8rem;
-            }
-            .day-card {
-                padding: 0.8rem;
-            }
-            .match-item {
-                font-size: 0.7rem;
-            }
-            .btn-marcar {
-                font-size: 0.75rem;
-            }
-            .modal-content {
-                width: 95%;
-                padding: 1.2rem;
-            }
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: #2ecc71;
         }
     </style>
 </head>
@@ -451,26 +358,30 @@
             <h1>⚽ Grêmio JMF - Amistosos</h1>
             <div class="month-indicator">📅 Abril 2026</div>
             <div class="preference-badge">
-                🏆 Seg: Futsal Masc | Ter: Carimba* | Qua: Futsal Fem* | Qui: Vôlei* | Sex: Rodízio
+                🏆 Seg: Futsal Masc | Ter: Carimba | Qua: Futsal Fem | Qui: Vôlei | Sex: Rodízio
             </div>
-            <p>Agendamento colaborativo em tempo real • apenas dias úteis (seg-sex) • *preferência (outras modalidades permitidas)</p>
-            <p style="color: #e67e22; font-size: 0.75rem; margin-top: 5px;">⚠️ <strong>ATENÇÃO:</strong> Cada dia pode ter APENAS 1 amistoso!</p>
+            <div id="connectionStatus" class="status-bar">
+                🔄 Carregando dados...
+            </div>
         </div>
 
         <div id="calendarContainer" class="calendar-grid">
-            <!-- Calendário de Abril/2026 será renderizado via JavaScript -->
+            <div class="loading">🔄 Carregando calendário...</div>
         </div>
+        
         <footer>
-            🟢 Cada turma: máximo 2 amistosos por semana | 🚫 Sem jogos contra si mesma | 📅 **APENAS 1 AMISTOSO POR DIA**<br>
-            📌 Clique em "Cancelar Amistoso" para remover um jogo já marcado
+            ✅ <strong>DADOS SALVOS NA NUVEM (Google Sheets)</strong><br>
+            📊 Planilha: <a href="https://docs.google.com/spreadsheets/d/1Cz36Ap36sdJYmWhPSwf123E6Q6cN58BrqCnO_BOd1Pk/edit" target="_blank" style="color:#2ecc71;">Ver planilha de amistosos</a><br>
+            🗑️ Clique em "Cancelar Amistoso" para remover um jogo<br>
+            🔄 Sincronização automática a cada 30 segundos
         </footer>
     </div>
 
     <!-- Modal para marcar amistoso -->
     <div id="matchModal" class="modal">
         <div class="modal-content">
-            <h3>➕ Marcar Amistoso - Abril 2026</h3>
-            <div id="modalDateInfo" style="text-align:center; font-size:0.8rem; margin-bottom:12px; background:#1a2a24; border-radius:30px; padding:5px;"></div>
+            <h3>➕ Marcar Amistoso</h3>
+            <div id="modalDateInfo" style="text-align:center; margin-bottom:12px; background:#1a2a24; border-radius:30px; padding:5px;"></div>
             <div id="preferenceWarning" class="preference-warning"></div>
             <div class="form-group">
                 <label>🏫 Sua Turma</label>
@@ -498,96 +409,113 @@
         </div>
     </div>
 
-    <!-- Modal de confirmação para cancelar amistoso -->
+    <!-- Modal de confirmação para cancelar -->
     <div id="confirmCancelModal" class="confirm-modal">
         <div class="confirm-modal-content">
             <h4>⚠️ Cancelar Amistoso</h4>
-            <p id="cancelMatchInfo" style="margin: 10px 0; font-size: 0.9rem;"></p>
-            <p style="font-size: 0.8rem; color: #e67e22;">Esta ação não pode ser desfeita!</p>
+            <p id="cancelMatchInfo" style="margin: 10px 0;"></p>
             <div class="confirm-buttons">
-                <button class="btn-confirm-keep" id="keepMatchBtn">Manter</button>
-                <button class="btn-confirm-cancel" id="confirmCancelBtn">Cancelar Jogo</button>
+                <button class="btn-cancel" id="keepMatchBtn">Manter</button>
+                <button class="btn-confirm-cancel" id="confirmCancelBtn">Cancelar</button>
             </div>
         </div>
     </div>
 
     <script>
-        // ==================== CONFIGURAÇÃO: MÊS DE ABRIL/2026 ====================
-        const TARGET_YEAR = 2026;
-        const TARGET_MONTH = 3; // 3 = Abril
+        // ==================== CONFIGURAÇÕES ====================
+        // SEU URL DO APPS SCRIPT
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzofjDJo4KO6nacKYADBcEYXoobD1EqNTICWItONSfO1QNO-6sLfatp9wt7F9hudi0/exec";
         
-        // ==================== PREFERÊNCIAS POR DIA DA SEMANA ====================
+        const TARGET_YEAR = 2026;
+        const TARGET_MONTH = 3; // Abril
+        
         const PREFERENCE_BY_DAY = {
-            1: { sport: "Futsal masculino", message: "🥇 Segunda-feira: modalidade PREFERENCIAL é Futsal Masculino!" },
-            2: { sport: "Carimba", message: "🥇 Terça-feira: modalidade PREFERENCIAL é Carimba!" },
-            3: { sport: "Futsal feminino", message: "🥇 Quarta-feira: modalidade PREFERENCIAL é Futsal Feminino!" },
-            4: { sport: "Vôlei", message: "🥇 Quinta-feira: modalidade PREFERENCIAL é Vôlei!" },
-            5: { sport: null, message: "🎉 Sexta-feira: rodízio livre - qualquer modalidade é bem-vinda!" }
+            1: { sport: "Futsal masculino", message: "🥇 Segunda-feira: Futsal Masculino (preferência)" },
+            2: { sport: "Carimba", message: "🥇 Terça-feira: Carimba (preferência)" },
+            3: { sport: "Futsal feminino", message: "🥇 Quarta-feira: Futsal Feminino (preferência)" },
+            4: { sport: "Vôlei", message: "🥇 Quinta-feira: Vôlei (preferência)" },
+            5: { sport: null, message: "🎉 Sexta-feira: Rodízio livre - qualquer modalidade!" }
         };
         
-        // ==================== LISTA DE TURMAS ====================
         const TURMAS = [
             "1º ADM", "1º ENFER", "1º INFOR", "1º SEC",
             "2º AGRO", "2º ENFER", "2º FINANÇAS", "2º INFOR",
             "3º ADM", "3º ENFER", "3º INFOR", "3º LOG"
         ];
-
-        // ==================== CONFIGURAÇÃO DO BANCO LOCAL ====================
-        const STORAGE_KEY = "gremio_amistosos_jmf_2026_with_cancel";
+        
         let allMatches = [];
+        let selectedDay = null;
         let matchToCancel = null;
-
-        // ==================== FUNÇÕES DE PERSISTÊNCIA ====================
-        function loadMatchesFromLocalStorage() {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) {
-                allMatches = JSON.parse(stored);
-                allMatches = allMatches.filter(m => m.ano === TARGET_YEAR);
-            } else {
-                allMatches = [];
-                // Exemplos para abril/2026
-                allMatches.push({
-                    id: Date.now() + 1,
-                    dia: 6,
-                    mes: TARGET_MONTH,
-                    ano: TARGET_YEAR,
-                    turma_1: "1º ADM",
-                    turma_2: "2º ENFER",
-                    esporte: "Futsal masculino",
-                    timestamp: Date.now()
-                });
-                allMatches.push({
-                    id: Date.now() + 2,
-                    dia: 7,
-                    mes: TARGET_MONTH,
-                    ano: TARGET_YEAR,
-                    turma_1: "3º INFOR",
-                    turma_2: "3º ADM",
-                    esporte: "Carimba",
-                    timestamp: Date.now()
-                });
-                saveMatchesToLocalStorage();
+        let isSaving = false;
+        
+        // ==================== FUNÇÕES DO GOOGLE SHEETS ====================
+        async function carregarDoGoogleSheets() {
+            try {
+                const response = await fetch(SCRIPT_URL);
+                const data = await response.json();
+                
+                if (data && data.length > 1) {
+                    allMatches = [];
+                    for (let i = 1; i < data.length; i++) {
+                        const row = data[i];
+                        if (row[0] && row[1]) {
+                            allMatches.push({
+                                id: row[0],
+                                dia: parseInt(row[1]),
+                                mes: parseInt(row[2]),
+                                ano: parseInt(row[3]),
+                                turma_1: row[4],
+                                turma_2: row[5],
+                                esporte: row[6]
+                            });
+                        }
+                    }
+                }
+                
+                // Filtrar apenas Abril/2026
+                allMatches = allMatches.filter(m => m.mes === TARGET_MONTH && m.ano === TARGET_YEAR);
+                
+                document.getElementById("connectionStatus").innerHTML = "🟢 Conectado - Dados sincronizados!";
+                document.getElementById("connectionStatus").className = "status-bar connected";
+                renderCalendar();
+                return true;
+            } catch (error) {
+                console.error("Erro ao carregar:", error);
+                document.getElementById("connectionStatus").innerHTML = "⚠️ Erro de conexão. Tentando novamente...";
+                return false;
             }
         }
-
-        function saveMatchesToLocalStorage() {
-            localStorage.setItem(STORAGE_KEY, JSON.stringify(allMatches));
-            window.dispatchEvent(new Event("storage"));
+        
+        async function salvarNoGoogleSheets(match, isDelete = false) {
+            if (isSaving) return false;
+            isSaving = true;
+            
+            try {
+                const formData = new FormData();
+                formData.append('action', isDelete ? 'delete' : 'add');
+                formData.append('id', match.id);
+                formData.append('dia', match.dia);
+                formData.append('mes', match.mes);
+                formData.append('ano', match.ano);
+                formData.append('turma1', match.turma_1);
+                formData.append('turma2', match.turma_2);
+                formData.append('esporte', match.esporte);
+                
+                const response = await fetch(SCRIPT_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+                
+                isSaving = false;
+                return true;
+            } catch (error) {
+                console.error("Erro ao salvar:", error);
+                isSaving = false;
+                return false;
+            }
         }
-
-        function addMatch(match) {
-            match.id = Date.now() + Math.random() * 10000;
-            match.timestamp = Date.now();
-            allMatches.push(match);
-            saveMatchesToLocalStorage();
-        }
-
-        function removeMatch(matchId) {
-            allMatches = allMatches.filter(m => m.id !== matchId);
-            saveMatchesToLocalStorage();
-        }
-
-        // ==================== FUNÇÕES AUXILIARES DE VALIDAÇÃO ====================
+        
+        // ==================== FUNÇÕES DE VALIDAÇÃO ====================
         function getWeekNumber(date) {
             const d = new Date(date);
             d.setHours(0, 0, 0, 0);
@@ -595,12 +523,11 @@
             const week1 = new Date(d.getFullYear(), 0, 4);
             return 1 + Math.round(((d - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
         }
-
-        function turmaExcedeuLimiteSemanal(turma, dataJogo, ignoreMatchId = null) {
+        
+        function turmaExcedeuLimiteSemanal(turma, dataJogo) {
             const semanaAlvo = getWeekNumber(dataJogo);
             let count = 0;
             for (let m of allMatches) {
-                if (ignoreMatchId && m.id === ignoreMatchId) continue;
                 const dataMatch = new Date(m.ano, m.mes, m.dia);
                 if (getWeekNumber(dataMatch) === semanaAlvo) {
                     if (m.turma_1 === turma || m.turma_2 === turma) {
@@ -611,29 +538,14 @@
             }
             return false;
         }
-
-        function diaJaPossuiAmistoso(dia, mes, ano, ignoreMatchId = null) {
-            return allMatches.some(m => {
-                if (ignoreMatchId && m.id === ignoreMatchId) return false;
-                return m.dia === dia && m.mes === mes && m.ano === ano;
-            });
+        
+        function diaJaPossuiAmistoso(dia, mes, ano) {
+            return allMatches.some(m => m.dia === dia && m.mes === mes && m.ano === ano);
         }
-
-        function jogoDuplicado(dia, mes, ano, turmaA, turmaB, esporte, ignoreMatchId = null) {
-            return allMatches.some(m => {
-                if (ignoreMatchId && m.id === ignoreMatchId) return false;
-                if (m.dia === dia && m.mes === mes && m.ano === ano) {
-                    const mesmoConfronto = (m.turma_1 === turmaA && m.turma_2 === turmaB) || 
-                                           (m.turma_1 === turmaB && m.turma_2 === turmaA);
-                    return mesmoConfronto && m.esporte === esporte;
-                }
-                return false;
-            });
-        }
-
+        
         function validarAmistoso(dia, mes, ano, turma1, turma2, esporte) {
             if (diaJaPossuiAmistoso(dia, mes, ano)) {
-                return { ok: false, msg: "❌ Este dia já possui um amistoso marcado! Cada dia pode ter apenas 1 jogo." };
+                return { ok: false, msg: "❌ Este dia já possui um amistoso! Cada dia pode ter apenas 1 jogo." };
             }
             if (turma1 === turma2) {
                 return { ok: false, msg: "❌ A turma não pode jogar contra ela mesma!" };
@@ -645,151 +557,97 @@
             if (turmaExcedeuLimiteSemanal(turma2, dataJogo)) {
                 return { ok: false, msg: `⚠️ A turma ${turma2} já possui 2 amistosos nesta semana!` };
             }
-            if (jogoDuplicado(dia, mes, ano, turma1, turma2, esporte)) {
-                return { ok: false, msg: `⚠️ Jogo duplicado: ${turma1} vs ${turma2} - ${esporte} já existe neste dia.` };
-            }
             return { ok: true };
         }
-
-        // ==================== RENDERIZAÇÃO DO CALENDÁRIO ====================
-        function getPreferenceForDay(dia, mes, ano) {
-            const data = new Date(ano, mes, dia);
-            const diaSemana = data.getDay();
-            return PREFERENCE_BY_DAY[diaSemana] || null;
+        
+        // ==================== RENDERIZAÇÃO ====================
+        function getPreferenceForDay(dia) {
+            const data = new Date(TARGET_YEAR, TARGET_MONTH, dia);
+            return PREFERENCE_BY_DAY[data.getDay()] || null;
         }
-
+        
         function renderCalendar() {
-            const ano = TARGET_YEAR;
-            const mes = TARGET_MONTH;
-            const diasNoMes = new Date(ano, mes + 1, 0).getDate();
+            const container = document.getElementById("calendarContainer");
+            if (!container) return;
+            
+            const diasNoMes = new Date(TARGET_YEAR, TARGET_MONTH + 1, 0).getDate();
             let diasUteis = [];
             for (let d = 1; d <= diasNoMes; d++) {
-                const data = new Date(ano, mes, d);
+                const data = new Date(TARGET_YEAR, TARGET_MONTH, d);
                 const diaSemana = data.getDay();
                 if (diaSemana !== 0 && diaSemana !== 6) {
                     diasUteis.push(d);
                 }
             }
-
-            const container = document.getElementById("calendarContainer");
-            if (!container) return;
+            
             container.innerHTML = "";
-
+            
             for (let dia of diasUteis) {
-                const dataAtual = new Date(ano, mes, dia);
+                const dataAtual = new Date(TARGET_YEAR, TARGET_MONTH, dia);
                 const weekShort = dataAtual.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '');
-                const jogoExistente = allMatches.find(m => m.dia === dia && m.mes === mes && m.ano === ano);
-                const pref = getPreferenceForDay(dia, mes, ano);
+                const jogoExistente = allMatches.find(m => m.dia === dia);
+                const pref = getPreferenceForDay(dia);
                 
                 const card = document.createElement("div");
-                card.className = "day-card";
-                if (jogoExistente) {
-                    card.classList.add("occupied");
-                }
-
-                let prefHtml = '';
-                if (pref && pref.sport) {
-                    prefHtml = `<span class="pref-indicator">⭐ ${pref.sport}</span>`;
-                } else if (pref && !pref.sport) {
-                    prefHtml = `<span class="pref-indicator">🎲 Rodízio</span>`;
-                }
-
-                let occupiedHtml = '';
-                if (jogoExistente) {
-                    occupiedHtml = `<span class="occupied-badge">🔒 Ocupado</span>`;
-                }
-
-                const headerDiv = document.createElement("div");
-                headerDiv.className = "day-header";
-                headerDiv.innerHTML = `
-                    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
-                        <span class="day-number">${dia}</span>
-                        ${prefHtml}
-                        ${occupiedHtml}
-                    </div>
-                    <span class="weekday">${weekShort}</span>
-                `;
-
-                const matchesDiv = document.createElement("div");
-                matchesDiv.className = "matches-list";
-
-                if (!jogoExistente) {
-                    matchesDiv.innerHTML = '<div class="empty-matches">✨ Nenhum amistoso marcado</div>';
-                } else {
-                    matchesDiv.innerHTML = `
-                        <div class="match-item">
-                            <div class="match-text">
-                                <span class="match-teams">${jogoExistente.turma_1} 🆚 ${jogoExistente.turma_2}</span>
-                                <span class="match-sport">${jogoExistente.esporte}</span>
-                            </div>
-                            <button class="btn-cancel-match" data-id="${jogoExistente.id}" data-dia="${dia}" data-info="${jogoExistente.turma_1} vs ${jogoExistente.turma_2} - ${jogoExistente.esporte}">
-                                🗑️ Cancelar Amistoso
-                            </button>
+                card.className = "day-card" + (jogoExistente ? " occupied" : "");
+                
+                let prefHtml = pref?.sport ? `<span class="pref-indicator">⭐ ${pref.sport}</span>` : 
+                               (pref ? `<span class="pref-indicator">🎲 Rodízio</span>` : "");
+                
+                card.innerHTML = `
+                    <div class="day-header">
+                        <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                            <span class="day-number">${dia}</span>
+                            ${prefHtml}
+                            ${jogoExistente ? '<span class="occupied-badge">🔒 Ocupado</span>' : ''}
                         </div>
-                    `;
-                }
-
-                const btnMarcar = document.createElement("button");
-                btnMarcar.className = "btn-marcar";
-                btnMarcar.innerHTML = jogoExistente ? "🔒 Dia Ocupado" : "📆 Marcar Amistoso";
-                btnMarcar.disabled = !!jogoExistente;
+                        <span class="weekday">${weekShort}</span>
+                    </div>
+                    <div class="matches-list">
+                        ${jogoExistente ? `
+                            <div class="match-item">
+                                <div class="match-text">
+                                    <span class="match-teams">${jogoExistente.turma_1} 🆚 ${jogoExistente.turma_2}</span>
+                                    <span class="match-sport">${jogoExistente.esporte}</span>
+                                </div>
+                                <button class="btn-cancel-match" data-id="${jogoExistente.id}" data-info="${jogoExistente.turma_1} vs ${jogoExistente.turma_2} - ${jogoExistente.esporte}">
+                                    🗑️ Cancelar Amistoso
+                                </button>
+                            </div>
+                        ` : '<div class="empty-matches">✨ Nenhum amistoso marcado</div>'}
+                    </div>
+                    <button class="btn-marcar" ${jogoExistente ? 'disabled' : ''}>
+                        ${jogoExistente ? "🔒 Dia Ocupado" : "📆 Marcar Amistoso"}
+                    </button>
+                `;
                 
                 if (!jogoExistente) {
-                    btnMarcar.addEventListener("click", (e) => {
-                        e.stopPropagation();
-                        openModalForDay(dia, mes, ano);
-                    });
+                    const btn = card.querySelector('.btn-marcar');
+                    btn.addEventListener('click', () => openModalForDay(dia));
                 }
-
-                card.appendChild(headerDiv);
-                card.appendChild(matchesDiv);
-                card.appendChild(btnMarcar);
+                
                 container.appendChild(card);
             }
-
-            // Adicionar eventos de cancelamento após renderizar
+            
+            // Adicionar eventos de cancelamento
             document.querySelectorAll('.btn-cancel-match').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
-                    const matchId = parseInt(btn.dataset.id);
+                    const matchId = btn.dataset.id;
                     const matchInfo = btn.dataset.info;
                     openCancelModal(matchId, matchInfo);
                 });
             });
         }
-
-        // ==================== FUNÇÕES DE CANCELAMENTO ====================
-        function openCancelModal(matchId, matchInfo) {
-            matchToCancel = matchId;
-            const cancelModal = document.getElementById("confirmCancelModal");
-            const infoDiv = document.getElementById("cancelMatchInfo");
-            infoDiv.innerHTML = `Deseja cancelar o amistoso:<br><strong>${matchInfo}</strong>?`;
-            cancelModal.style.display = "flex";
-        }
-
-        function closeCancelModal() {
-            document.getElementById("confirmCancelModal").style.display = "none";
-            matchToCancel = null;
-        }
-
-        function executeCancel() {
-            if (matchToCancel) {
-                removeMatch(matchToCancel);
-                closeCancelModal();
-                renderCalendar();
-            }
-        }
-
-        // ==================== MODAL DE MARCAÇÃO ====================
-        let selectedDayContext = null;
-
-        function openModalForDay(dia, mes, ano) {
-            if (diaJaPossuiAmistoso(dia, mes, ano)) {
-                alert("Este dia já possui um amistoso marcado!");
+        
+        // ==================== MODAL FUNCTIONS ====================
+        function openModalForDay(dia) {
+            if (diaJaPossuiAmistoso(dia, TARGET_MONTH, TARGET_YEAR)) {
+                alert("Este dia já possui um amistoso!");
                 return;
             }
             
-            selectedDayContext = { year: ano, month: mes, day: dia };
+            selectedDay = dia;
             
             const turma1Sel = document.getElementById("turma1Select");
             const turma2Sel = document.getElementById("turma2Select");
@@ -797,103 +655,93 @@
             turma2Sel.innerHTML = "";
             
             TURMAS.forEach(turma => {
-                const opt1 = document.createElement("option");
-                opt1.value = turma;
-                opt1.textContent = turma;
-                const opt2 = document.createElement("option");
-                opt2.value = turma;
-                opt2.textContent = turma;
-                turma1Sel.appendChild(opt1);
-                turma2Sel.appendChild(opt2);
+                turma1Sel.innerHTML += `<option value="${turma}">${turma}</option>`;
+                turma2Sel.innerHTML += `<option value="${turma}">${turma}</option>`;
             });
             
-            const dataAtual = new Date(ano, mes, dia);
-            const diaSemana = dataAtual.getDay();
-            const prefConfig = PREFERENCE_BY_DAY[diaSemana];
+            const dataAtual = new Date(TARGET_YEAR, TARGET_MONTH, dia);
+            const pref = PREFERENCE_BY_DAY[dataAtual.getDay()];
             const warningDiv = document.getElementById("preferenceWarning");
-            const selectEsporte = document.getElementById("esporteSelect");
+            warningDiv.innerHTML = pref ? `⭐ ${pref.message}` : "";
             
-            if (prefConfig) {
-                warningDiv.innerHTML = `⭐ ${prefConfig.message}`;
-                if (prefConfig.sport) {
-                    for (let i = 0; i < selectEsporte.options.length; i++) {
-                        if (selectEsporte.options[i].value === prefConfig.sport) {
-                            selectEsporte.options[i].style.backgroundColor = "#2e7d64";
-                            selectEsporte.options[i].style.fontWeight = "bold";
-                        } else {
-                            selectEsporte.options[i].style.backgroundColor = "";
-                            selectEsporte.options[i].style.fontWeight = "normal";
-                        }
-                    }
-                }
-            } else {
-                warningDiv.innerHTML = `📅 Fim de semana - apenas para referência`;
-            }
-            
-            document.getElementById("modalError").innerText = "";
-            const dataFormatada = `${dia.toString().padStart(2,'0')}/04/2026 - ${dataAtual.toLocaleDateString('pt-BR', { weekday: 'long' })}`;
-            document.getElementById("modalDateInfo").innerHTML = `📅 ${dataFormatada}`;
+            document.getElementById("modalDateInfo").innerHTML = `📅 ${dia}/04/2026 - ${dataAtual.toLocaleDateString('pt-BR', { weekday: 'long' })}`;
             document.getElementById("matchModal").style.display = "flex";
         }
-
+        
         function closeModal() {
             document.getElementById("matchModal").style.display = "none";
-            selectedDayContext = null;
+            selectedDay = null;
             document.getElementById("modalError").innerText = "";
         }
-
-        function confirmMatch() {
-            if (!selectedDayContext) return;
-            
-            const { year, month, day } = selectedDayContext;
-            
-            if (diaJaPossuiAmistoso(day, month, year)) {
-                document.getElementById("modalError").innerText = "❌ Este dia já possui um amistoso marcado!";
-                return;
-            }
+        
+        async function confirmMatch() {
+            if (!selectedDay) return;
             
             const turma1 = document.getElementById("turma1Select").value;
             const turma2 = document.getElementById("turma2Select").value;
             const esporte = document.getElementById("esporteSelect").value;
             
-            const validation = validarAmistoso(day, month, year, turma1, turma2, esporte);
+            const validation = validarAmistoso(selectedDay, TARGET_MONTH, TARGET_YEAR, turma1, turma2, esporte);
             if (!validation.ok) {
                 document.getElementById("modalError").innerText = validation.msg;
                 return;
             }
             
             const novoMatch = {
-                id: null,
-                dia: day,
-                mes: month,
-                ano: year,
+                id: Date.now().toString(),
+                dia: selectedDay,
+                mes: TARGET_MONTH,
+                ano: TARGET_YEAR,
                 turma_1: turma1,
                 turma_2: turma2,
-                esporte: esporte,
-                timestamp: Date.now()
+                esporte: esporte
             };
-            addMatch(novoMatch);
-            closeModal();
+            
+            allMatches.push(novoMatch);
             renderCalendar();
+            closeModal();
+            
+            document.getElementById("connectionStatus").innerHTML = "💾 Salvando na planilha...";
+            document.getElementById("connectionStatus").className = "status-bar saving";
+            await salvarNoGoogleSheets(novoMatch);
+            await carregarDoGoogleSheets();
         }
-
-        // ==================== SISTEMA COLABORATIVO ====================
-        function syncFromStorage() {
-            const stored = localStorage.getItem(STORAGE_KEY);
-            if (stored) {
-                const newMatches = JSON.parse(stored);
-                const filteredNew = newMatches.filter(m => m.ano === TARGET_YEAR);
-                if (JSON.stringify(allMatches) !== JSON.stringify(filteredNew)) {
-                    allMatches = filteredNew;
-                    renderCalendar();
+        
+        function openCancelModal(matchId, matchInfo) {
+            matchToCancel = matchId;
+            document.getElementById("cancelMatchInfo").innerHTML = `Deseja cancelar:<br><strong>${matchInfo}</strong>?`;
+            document.getElementById("confirmCancelModal").style.display = "flex";
+        }
+        
+        function closeCancelModal() {
+            document.getElementById("confirmCancelModal").style.display = "none";
+            matchToCancel = null;
+        }
+        
+        async function executeCancel() {
+            if (matchToCancel) {
+                const matchToRemove = allMatches.find(m => m.id === matchToCancel);
+                allMatches = allMatches.filter(m => m.id !== matchToCancel);
+                renderCalendar();
+                closeCancelModal();
+                
+                if (matchToRemove) {
+                    document.getElementById("connectionStatus").innerHTML = "💾 Removendo da planilha...";
+                    document.getElementById("connectionStatus").className = "status-bar saving";
+                    await salvarNoGoogleSheets(matchToRemove, true);
+                    await carregarDoGoogleSheets();
                 }
             }
         }
-
+        
         // ==================== INICIALIZAÇÃO ====================
         function init() {
-            loadMatchesFromLocalStorage();
-            renderCalendar();
+            carregarDoGoogleSheets();
+            
+            // Atualização automática a cada 30 segundos
+            setInterval(() => {
+                carregarDoGoogleSheets();
+            }, 30000);
             
             document.getElementById("cancelModalBtn").addEventListener("click", closeModal);
             document.getElementById("confirmMatchBtn").addEventListener("click", confirmMatch);
@@ -901,59 +749,12 @@
             document.getElementById("keepMatchBtn").addEventListener("click", closeCancelModal);
             
             window.addEventListener("click", (e) => {
-                const modal = document.getElementById("matchModal");
-                const cancelModal = document.getElementById("confirmCancelModal");
-                if (e.target === modal) closeModal();
-                if (e.target === cancelModal) closeCancelModal();
+                if (e.target === document.getElementById("matchModal")) closeModal();
+                if (e.target === document.getElementById("confirmCancelModal")) closeCancelModal();
             });
-            
-            window.addEventListener("storage", (e) => {
-                if (e.key === STORAGE_KEY) {
-                    syncFromStorage();
-                }
-            });
-            
-            setInterval(() => {
-                syncFromStorage();
-            }, 2000);
         }
         
         init();
     </script>
-    <!-- Adicione antes do fechamento </body> -->
-<script>
-    // Detectar se é mobile e adicionar botão de compartilhar
-    if (/Mobi|Android|iPhone|iPad|iPod/i.test(navigator.userAgent)) {
-        const shareBtn = document.createElement('button');
-        shareBtn.innerHTML = '📱 Compartilhar Link';
-        shareBtn.style.cssText = `
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            background: #2ecc71;
-            color: #0a0f0f;
-            border: none;
-            padding: 12px 20px;
-            border-radius: 50px;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            z-index: 999;
-        `;
-        shareBtn.onclick = () => {
-            if (navigator.share) {
-                navigator.share({
-                    title: 'Grêmio JMF - Amistosos',
-                    text: 'Sistema de agendamento de amistosos',
-                    url: window.location.href
-                });
-            } else {
-                navigator.clipboard.writeText(window.location.href);
-                alert('Link copiado! Compartilhe no WhatsApp');
-            }
-        };
-        document.body.appendChild(shareBtn);
-    }
-</script>
 </body>
 </html>
