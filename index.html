@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
     <title>Grêmio JMF - Amistosos • Abril 2026</title>
+    <!-- Biblioteca para gerar PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <style>
         * {
             margin: 0;
@@ -58,6 +60,54 @@
             font-size: 0.7rem;
             margin-top: 8px;
             color: #b9f6ca;
+        }
+
+        .actions-bar {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            margin: 1rem 0;
+            flex-wrap: wrap;
+        }
+
+        .btn-pdf {
+            background: #e74c3c;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: white;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-pdf:hover {
+            background: #c0392b;
+            transform: scale(0.98);
+        }
+
+        .btn-refresh {
+            background: #2ecc71;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 40px;
+            font-weight: bold;
+            color: #0a0f0f;
+            font-size: 0.9rem;
+            cursor: pointer;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-refresh:hover {
+            background: #27ae60;
+            transform: scale(0.98);
         }
 
         .status-bar {
@@ -340,6 +390,58 @@
             padding: 1rem;
         }
 
+        /* Estilos para o PDF */
+        .pdf-container {
+            display: none;
+        }
+
+        .pdf-content {
+            padding: 2rem;
+            font-family: Arial, sans-serif;
+            background: white;
+            color: black;
+        }
+
+        .pdf-content h1 {
+            color: #2ecc71;
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+
+        .pdf-content .pdf-date {
+            text-align: center;
+            color: #666;
+            margin-bottom: 2rem;
+        }
+
+        .pdf-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 1rem;
+        }
+
+        .pdf-table th, .pdf-table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+
+        .pdf-table th {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .pdf-table tr:nth-child(even) {
+            background: #f9f9f9;
+        }
+
+        .pdf-footer {
+            text-align: center;
+            margin-top: 2rem;
+            font-size: 0.8rem;
+            color: #666;
+        }
+
         @media (max-width: 640px) {
             body { padding: 0.8rem; }
             .day-card { padding: 0.8rem; }
@@ -360,6 +462,14 @@
             <div class="preference-badge">
                 🏆 Seg: Futsal Masc | Ter: Carimba | Qua: Futsal Fem | Qui: Vôlei | Sex: Rodízio
             </div>
+            <div class="actions-bar">
+                <button class="btn-pdf" id="btnGerarPDF">
+                    📄 Gerar PDF dos Amistosos
+                </button>
+                <button class="btn-refresh" id="btnAtualizar">
+                    🔄 Atualizar Dados
+                </button>
+            </div>
             <div id="connectionStatus" class="status-bar">
                 🔄 Carregando dados...
             </div>
@@ -373,8 +483,29 @@
             ✅ <strong>DADOS SALVOS NA NUVEM (Google Sheets)</strong><br>
             📊 Planilha: <a href="https://docs.google.com/spreadsheets/d/1Cz36Ap36sdJYmWhPSwf123E6Q6cN58BrqCnO_BOd1Pk/edit" target="_blank" style="color:#2ecc71;">Ver planilha de amistosos</a><br>
             🗑️ Clique em "Cancelar Amistoso" para remover um jogo<br>
-            🔄 Sincronização automática a cada 30 segundos
+            🔄 Sincronização automática a cada 30 segundos<br>
+            📄 Clique em "Gerar PDF" para exportar todos os amistosos marcados
         </footer>
+    </div>
+
+    <!-- Conteúdo escondido para gerar PDF -->
+    <div id="pdfContainer" class="pdf-container">
+        <div id="pdfContent" class="pdf-content">
+            <h1>⚽ Grêmio JMF - Amistosos</h1>
+            <div class="pdf-date" id="pdfDate"></div>
+            <table class="pdf-table" id="pdfTable">
+                <thead>
+                    <tr><th>Data</th><th>Dia da Semana</th><th>Turma 1</th><th>Turma 2</th><th>Modalidade</th></tr>
+                </thead>
+                <tbody id="pdfTableBody">
+                    <tr><td colspan="5" style="text-align:center;">Nenhum amistoso marcado</td></tr>
+                </tbody>
+            </table>
+            <div class="pdf-footer">
+                Documento gerado em: <span id="pdfGeradoEm"></span><br>
+                Total de amistosos: <span id="pdfTotal"></span>
+            </div>
+        </div>
     </div>
 
     <!-- Modal para marcar amistoso -->
@@ -423,7 +554,6 @@
 
     <script>
         // ==================== CONFIGURAÇÕES ====================
-        // SEU URL DO APPS SCRIPT
         const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzofjDJo4KO6nacKYADBcEYXoobD1EqNTICWItONSfO1QNO-6sLfatp9wt7F9hudi0/exec";
         
         const TARGET_YEAR = 2026;
@@ -472,7 +602,6 @@
                     }
                 }
                 
-                // Filtrar apenas Abril/2026
                 allMatches = allMatches.filter(m => m.mes === TARGET_MONTH && m.ano === TARGET_YEAR);
                 
                 document.getElementById("connectionStatus").innerHTML = "🟢 Conectado - Dados sincronizados!";
@@ -501,7 +630,7 @@
                 formData.append('turma2', match.turma_2);
                 formData.append('esporte', match.esporte);
                 
-                const response = await fetch(SCRIPT_URL, {
+                await fetch(SCRIPT_URL, {
                     method: 'POST',
                     body: formData
                 });
@@ -558,6 +687,54 @@
                 return { ok: false, msg: `⚠️ A turma ${turma2} já possui 2 amistosos nesta semana!` };
             }
             return { ok: true };
+        }
+        
+        // ==================== FUNÇÃO PARA GERAR PDF ====================
+        function gerarPDF() {
+            if (allMatches.length === 0) {
+                alert("Nenhum amistoso marcado para gerar o PDF!");
+                return;
+            }
+            
+            // Ordenar os amistosos por data
+            const matchesOrdenados = [...allMatches].sort((a, b) => a.dia - b.dia);
+            
+            // Preencher a tabela do PDF
+            const tbody = document.getElementById("pdfTableBody");
+            tbody.innerHTML = "";
+            
+            const diasSemana = ["Domingo", "Segunda", "Terça", "Quarta", "Quinta", "Sexta", "Sábado"];
+            
+            for (let match of matchesOrdenados) {
+                const data = new Date(TARGET_YEAR, TARGET_MONTH, match.dia);
+                const nomeDia = diasSemana[data.getDay()];
+                const dataFormatada = `${match.dia}/04/${TARGET_YEAR}`;
+                
+                const row = tbody.insertRow();
+                row.insertCell(0).innerHTML = dataFormatada;
+                row.insertCell(1).innerHTML = nomeDia;
+                row.insertCell(2).innerHTML = match.turma_1;
+                row.insertCell(3).innerHTML = match.turma_2;
+                row.insertCell(4).innerHTML = match.esporte;
+            }
+            
+            // Atualizar informações do PDF
+            const agora = new Date();
+            document.getElementById("pdfDate").innerHTML = `Abril ${TARGET_YEAR}`;
+            document.getElementById("pdfGeradoEm").innerHTML = agora.toLocaleString('pt-BR');
+            document.getElementById("pdfTotal").innerHTML = matchesOrdenados.length;
+            
+            // Configurar e gerar PDF
+            const element = document.getElementById("pdfContent");
+            const opt = {
+                margin: [0.5, 0.5, 0.5, 0.5],
+                filename: `amistosos_abril_${TARGET_YEAR}.pdf`,
+                image: { type: 'jpeg', quality: 0.98 },
+                html2canvas: { scale: 2, letterRendering: true },
+                jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' }
+            };
+            
+            html2pdf().set(opt).from(element).save();
         }
         
         // ==================== RENDERIZAÇÃO ====================
@@ -629,7 +806,6 @@
                 container.appendChild(card);
             }
             
-            // Adicionar eventos de cancelamento
             document.querySelectorAll('.btn-cancel-match').forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     e.stopPropagation();
@@ -738,7 +914,6 @@
         function init() {
             carregarDoGoogleSheets();
             
-            // Atualização automática a cada 30 segundos
             setInterval(() => {
                 carregarDoGoogleSheets();
             }, 30000);
@@ -747,6 +922,8 @@
             document.getElementById("confirmMatchBtn").addEventListener("click", confirmMatch);
             document.getElementById("confirmCancelBtn").addEventListener("click", executeCancel);
             document.getElementById("keepMatchBtn").addEventListener("click", closeCancelModal);
+            document.getElementById("btnGerarPDF").addEventListener("click", gerarPDF);
+            document.getElementById("btnAtualizar").addEventListener("click", () => carregarDoGoogleSheets());
             
             window.addEventListener("click", (e) => {
                 if (e.target === document.getElementById("matchModal")) closeModal();
