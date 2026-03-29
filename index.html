@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
-    <title>Grêmio JMF - Amistosos • Abril 2026</title>
+    <title>Grêmio JMF - Amistosos • Maio 2026</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * {
@@ -69,26 +69,23 @@
             flex-wrap: wrap;
         }
 
-        .btn-pdf {
-            background: #e74c3c;
+        .btn-pdf, .btn-refresh {
             border: none;
             padding: 10px 20px;
             border-radius: 40px;
             font-weight: bold;
-            color: white;
             font-size: 0.9rem;
             cursor: pointer;
         }
 
+        .btn-pdf {
+            background: #e74c3c;
+            color: white;
+        }
+
         .btn-refresh {
             background: #2ecc71;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 40px;
-            font-weight: bold;
             color: #0a0f0f;
-            font-size: 0.9rem;
-            cursor: pointer;
         }
 
         .status-bar {
@@ -436,7 +433,7 @@
     <div class="app-container">
         <div class="header">
             <h1>⚽ Grêmio JMF - Amistosos</h1>
-            <div class="month-indicator">📅 Abril 2026</div>
+            <div class="month-indicator">📅 Maio 2026</div>
             <div class="preference-badge">
                 🏆 Seg: Futsal Masc | Ter: Carimba | Qua: Futsal Fem | Qui: Vôlei | Sex: Rodízio
             </div>
@@ -452,9 +449,7 @@
         </div>
         
         <footer>
-            ✅ <strong>REGRAS:</strong> Se marcar modalidade diferente da preferência, vira "SUPLENTE" (amarelo).<br>
-            🟢 Se depois marcar a modalidade PREFERÊNCIA, substitui automaticamente o suplente!<br>
-            🗑️ Clique em "Cancelar Amistoso" para remover qualquer jogo.
+            ✅ Clique no botão "Marcar Amistoso" para agendar um jogo
         </footer>
     </div>
 
@@ -462,10 +457,10 @@
         <div id="pdfContent" class="pdf-content">
             <h1>⚽ Grêmio JMF - Amistosos</h1>
             <table class="pdf-table" id="pdfTable">
-                <thead><tr><th>Data</th><th>Turma 1</th><th>Turma 2</th><th>Modalidade</th><th>Tipo</th> </tr>
-                </thead>
+                <thead>…
+<th>Data</th><th>Turma 1</th><th>Turma 2</th><th>Modalidade</th><th>Tipo</th></thead>
                 <tbody id="pdfTableBody"></tbody>
-             </table>
+            ……
         </div>
     </div>
 
@@ -513,11 +508,10 @@
 
     <script>
         // ==================== CONFIGURAÇÕES ====================
-        // SEU NOVO URL DO APPS SCRIPT
-        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzwCFbje9Uo1WdckSGynv5fmVZa6EMm9AFvO6DZ7yxyoadrmR0UGifDMRIn0DoNQu0/exec";
+        const SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxrQR4nc3C5Wj74GzKFpFXz-z3FHoXw54uDvKNwtvksNLorbuCmuFzYKVGuFCsTXJI/exec";
         
         const TARGET_YEAR = 2026;
-        const TARGET_MONTH = 3; // Abril
+        const TARGET_MONTH = 4; // Maio
         
         const PREFERENCE_BY_DAY = {
             1: { sport: "Futsal masculino", message: "🥇 Segunda: PREFERÊNCIA é Futsal Masculino" },
@@ -549,7 +543,7 @@
                         const row = data[i];
                         if (row[0] && row[1]) {
                             allMatches.push({
-                                id: row[0],
+                                id: row[0].toString(),
                                 dia: parseInt(row[1]),
                                 mes: parseInt(row[2]),
                                 ano: parseInt(row[3]),
@@ -562,12 +556,12 @@
                 }
                 
                 allMatches = allMatches.filter(m => m.mes === TARGET_MONTH && m.ano === TARGET_YEAR);
-                document.getElementById("connectionStatus").innerHTML = "🟢 Conectado - Dados sincronizados!";
+                document.getElementById("connectionStatus").innerHTML = "🟢 Conectado - " + allMatches.length + " amistosos";
                 document.getElementById("connectionStatus").className = "status-bar connected";
                 renderCalendar();
                 return true;
             } catch (error) {
-                console.error("Erro ao carregar:", error);
+                console.error("Erro:", error);
                 document.getElementById("connectionStatus").innerHTML = "⚠️ Erro de conexão";
                 return false;
             }
@@ -585,21 +579,15 @@
                 formData.append('turma2', match.turma_2);
                 formData.append('esporte', match.esporte);
                 
-                const response = await fetch(SCRIPT_URL, {
-                    method: 'POST',
-                    body: formData
-                });
-                
+                const response = await fetch(SCRIPT_URL, { method: 'POST', body: formData });
                 const result = await response.json();
-                console.log("Resposta do servidor:", result);
                 return result.success === true;
             } catch (error) {
-                console.error("Erro ao salvar:", error);
                 return false;
             }
         }
         
-        // ==================== FUNÇÕES DE PREFERÊNCIA ====================
+        // ==================== FUNÇÕES AUXILIARES ====================
         function getPreferenceForDay(dia) {
             const data = new Date(TARGET_YEAR, TARGET_MONTH, dia);
             return PREFERENCE_BY_DAY[data.getDay()] || null;
@@ -615,7 +603,6 @@
             return allMatches.find(m => m.dia === dia);
         }
         
-        // ==================== VALIDAÇÕES ====================
         function getWeekNumber(date) {
             const d = new Date(date);
             d.setHours(0, 0, 0, 0);
@@ -640,19 +627,19 @@
             return false;
         }
         
-        function validarAmistoso(dia, turma1, turma2, ignoreId = null) {
+        function validarAmistoso(dia, turma1, turma2) {
             if (turma1 === turma2) return { ok: false, msg: "❌ Não pode jogar contra si mesmo!" };
             const dataJogo = new Date(TARGET_YEAR, TARGET_MONTH, dia);
-            if (turmaExcedeuLimiteSemanal(turma1, dataJogo, ignoreId)) {
+            if (turmaExcedeuLimiteSemanal(turma1, dataJogo)) {
                 return { ok: false, msg: `⚠️ ${turma1} já tem 2 jogos nesta semana!` };
             }
-            if (turmaExcedeuLimiteSemanal(turma2, dataJogo, ignoreId)) {
+            if (turmaExcedeuLimiteSemanal(turma2, dataJogo)) {
                 return { ok: false, msg: `⚠️ ${turma2} já tem 2 jogos nesta semana!` };
             }
             return { ok: true };
         }
         
-        // ==================== FUNÇÃO PRINCIPAL DE MARCAR ====================
+        // ==================== FUNÇÃO MARCAR ====================
         async function marcarAmistoso(dia, turma1, turma2, esporte) {
             const jogoExistente = getAmistosoDoDia(dia);
             const ehPreferencia = isPreferencia(dia, esporte);
@@ -662,26 +649,20 @@
                 const jogoExistenteEhPreferencia = isPreferencia(dia, jogoExistente.esporte);
                 
                 if (jogoExistenteEhPreferencia) {
-                    return { ok: false, msg: `❌ Este dia já tem a modalidade PREFERÊNCIA (${prefDoDia?.sport}). Para mudar, cancele primeiro!` };
+                    return { ok: false, msg: `❌ Este dia já tem PREFERÊNCIA (${prefDoDia?.sport}).` };
                 }
                 
                 if (!jogoExistenteEhPreferencia && ehPreferencia) {
-                    const deleteSuccess = await salvarNoGoogleSheets(jogoExistente, true);
-                    if (!deleteSuccess) {
-                        return { ok: false, msg: "❌ Erro ao remover o suplente. Tente novamente." };
-                    }
+                    await salvarNoGoogleSheets(jogoExistente, true);
                     allMatches = allMatches.filter(m => m.id !== jogoExistente.id);
                     
                     const novoMatch = { id: Date.now().toString(), dia, mes: TARGET_MONTH, ano: TARGET_YEAR, turma_1: turma1, turma_2: turma2, esporte };
-                    const addSuccess = await salvarNoGoogleSheets(novoMatch);
-                    if (!addSuccess) {
-                        return { ok: false, msg: "❌ Erro ao adicionar a preferência." };
-                    }
+                    await salvarNoGoogleSheets(novoMatch);
                     allMatches.push(novoMatch);
-                    return { ok: true, msg: `🟢 Substituído! Agora é ${esporte} (PREFERÊNCIA do dia)!` };
+                    return { ok: true, msg: `🟢 Substituído por ${esporte} (PREFERÊNCIA)!` };
                 }
                 
-                return { ok: false, msg: `❌ Este dia já tem um amistoso SUPLENTE. Só pode substituir pela modalidade PREFERÊNCIA (${prefDoDia?.sport}).` };
+                return { ok: false, msg: `❌ Só pode substituir pela PREFERÊNCIA (${prefDoDia?.sport}).` };
             }
             
             const validation = validarAmistoso(dia, turma1, turma2);
@@ -689,34 +670,31 @@
             
             const novoMatch = { id: Date.now().toString(), dia, mes: TARGET_MONTH, ano: TARGET_YEAR, turma_1: turma1, turma_2: turma2, esporte };
             const success = await salvarNoGoogleSheets(novoMatch);
-            if (!success) {
-                return { ok: false, msg: "❌ Erro ao salvar. Tente novamente." };
-            }
-            allMatches.push(novoMatch);
+            if (!success) return { ok: false, msg: "❌ Erro ao salvar." };
             
+            allMatches.push(novoMatch);
             const tipo = ehPreferencia ? "PREFERÊNCIA" : "SUPLENTE";
             return { ok: true, msg: `✅ Amistoso marcado como ${tipo}!` };
         }
         
-        // ==================== FUNÇÃO DE CANCELAR ====================
+        // ==================== FUNÇÃO CANCELAR ====================
         async function cancelarAmistoso(matchId) {
-            const matchToRemove = allMatches.find(m => m.id === matchId);
-            if (!matchToRemove) {
-                return { ok: false, msg: "Amistoso não encontrado!" };
-            }
+            const match = allMatches.find(m => m.id === matchId);
+            if (!match) return { ok: false, msg: "Amistoso não encontrado!" };
             
-            const success = await salvarNoGoogleSheets(matchToRemove, true);
+            const success = await salvarNoGoogleSheets(match, true);
             if (success) {
                 allMatches = allMatches.filter(m => m.id !== matchId);
-                return { ok: true, msg: "✅ Amistoso cancelado com sucesso!" };
-            } else {
-                return { ok: false, msg: "❌ Erro ao cancelar. Tente novamente." };
+                return { ok: true, msg: "✅ Cancelado com sucesso!" };
             }
+            return { ok: false, msg: "❌ Erro ao cancelar." };
         }
         
         // ==================== RENDERIZAÇÃO ====================
         function renderCalendar() {
             const container = document.getElementById("calendarContainer");
+            if (!container) return;
+            
             const diasNoMes = new Date(TARGET_YEAR, TARGET_MONTH + 1, 0).getDate();
             let diasUteis = [];
             for (let d = 1; d <= diasNoMes; d++) {
@@ -749,6 +727,33 @@
                     </span>`;
                 }
                 
+                let matchHtml = '';
+                if (jogo) {
+                    matchHtml = `
+                        <div class="match-item ${!ehPreferencia ? 'suplente' : ''}">
+                            <div class="match-text">
+                                <span class="match-teams">${jogo.turma_1} 🆚 ${jogo.turma_2}</span>
+                                <span class="match-sport ${!ehPreferencia ? 'suplente' : ''}">${jogo.esporte}</span>
+                                ${!ehPreferencia ? '<span class="suplente-tag">(suplente)</span>' : ''}
+                            </div>
+                            <button class="btn-cancel-match" data-id="${jogo.id}" data-info="${jogo.turma_1} vs ${jogo.turma_2} - ${jogo.esporte}">
+                                🗑️ Cancelar Amistoso
+                            </button>
+                        </div>
+                    `;
+                } else {
+                    matchHtml = '<div class="empty-matches">✨ Nenhum amistoso marcado</div>';
+                }
+                
+                let btnHtml = '';
+                if (jogo && ehPreferencia) {
+                    btnHtml = `<button class="btn-marcar" disabled>🔒 Preferência</button>`;
+                } else if (jogo && !ehPreferencia) {
+                    btnHtml = `<button class="btn-marcar btn-substituir" data-dia="${dia}" data-pref="${pref?.sport || ''}">🔄 Substituir por Preferência?</button>`;
+                } else {
+                    btnHtml = `<button class="btn-marcar btn-novo" data-dia="${dia}">📆 Marcar Amistoso</button>`;
+                }
+                
                 card.innerHTML = `
                     <div class="day-header">
                         <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
@@ -758,34 +763,30 @@
                         </div>
                         <span class="weekday">${weekShort}</span>
                     </div>
-                    <div class="matches-list">
-                        ${jogo ? `
-                            <div class="match-item ${!ehPreferencia ? 'suplente' : ''}">
-                                <div class="match-text">
-                                    <span class="match-teams">${jogo.turma_1} 🆚 ${jogo.turma_2}</span>
-                                    <span class="match-sport ${!ehPreferencia ? 'suplente' : ''}">${jogo.esporte}</span>
-                                    ${!ehPreferencia ? '<span class="suplente-tag">(suplente)</span>' : ''}
-                                </div>
-                                <button class="btn-cancel-match" data-id="${jogo.id}" data-info="${jogo.turma_1} vs ${jogo.turma_2} - ${jogo.esporte}">
-                                    🗑️ Cancelar Amistoso
-                                </button>
-                            </div>
-                        ` : '<div class="empty-matches">✨ Nenhum amistoso marcado</div>'}
-                    </div>
-                    <button class="btn-marcar" ${jogo && ehPreferencia ? 'disabled' : ''}>
-                        ${jogo ? (ehPreferencia ? "🔒 Preferência" : "🔄 Substituir por Preferência?") : "📆 Marcar Amistoso"}
-                    </button>
+                    <div class="matches-list">${matchHtml}</div>
+                    ${btnHtml}
                 `;
-                
-                const btnMarcar = card.querySelector('.btn-marcar');
-                if (jogo && !ehPreferencia) {
-                    btnMarcar.addEventListener('click', () => abrirModalSubstituir(dia, pref?.sport));
-                } else if (!jogo) {
-                    btnMarcar.addEventListener('click', () => abrirModal(dia));
-                }
                 
                 container.appendChild(card);
             }
+            
+            // Adicionar eventos dos botões
+            document.querySelectorAll('.btn-novo').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const dia = parseInt(btn.dataset.dia);
+                    abrirModal(dia, false);
+                });
+            });
+            
+            document.querySelectorAll('.btn-substituir').forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const dia = parseInt(btn.dataset.dia);
+                    const pref = btn.dataset.pref;
+                    abrirModal(dia, true, pref);
+                });
+            });
             
             document.querySelectorAll('.btn-cancel-match').forEach(btn => {
                 btn.addEventListener('click', async (e) => {
@@ -797,9 +798,10 @@
             });
         }
         
-        // ==================== MODAL FUNCTIONS ====================
-        function abrirModal(dia) {
+        // ==================== MODAL ====================
+        function abrirModal(dia, isSubstituir = false, preferencia = null) {
             selectedDay = dia;
+            
             const turma1Sel = document.getElementById("turma1Select");
             const turma2Sel = document.getElementById("turma2Select");
             turma1Sel.innerHTML = "";
@@ -810,28 +812,10 @@
             });
             
             const pref = getPreferenceForDay(dia);
-            document.getElementById("preferenceWarning").innerHTML = pref ? `⭐ ${pref.message}` : "🎉 Sexta: qualquer modalidade é bem-vinda!";
-            document.getElementById("modalDateInfo").innerHTML = `📅 ${dia}/04/2026`;
-            document.getElementById("esporteSelect").disabled = false;
-            document.getElementById("matchModal").style.display = "flex";
-        }
-        
-        function abrirModalSubstituir(dia, preferencia) {
-            selectedDay = dia;
-            document.getElementById("preferenceWarning").innerHTML = `🟡 Este dia tem um SUPLENTE. Você pode substituir pela PREFERÊNCIA: <strong>${preferencia}</strong>`;
-            document.getElementById("modalDateInfo").innerHTML = `📅 ${dia}/04/2026 - Substituir por ${preferencia}`;
             
-            const turma1Sel = document.getElementById("turma1Select");
-            const turma2Sel = document.getElementById("turma2Select");
-            turma1Sel.innerHTML = "";
-            turma2Sel.innerHTML = "";
-            TURMAS.forEach(t => {
-                turma1Sel.innerHTML += `<option value="${t}">${t}</option>`;
-                turma2Sel.innerHTML += `<option value="${t}">${t}</option>`;
-            });
-            
-            const esporteSelect = document.getElementById("esporteSelect");
-            if (preferencia) {
+            if (isSubstituir && preferencia) {
+                document.getElementById("preferenceWarning").innerHTML = `🟡 Substituir SUPLENTE pela PREFERÊNCIA: <strong>${preferencia}</strong>`;
+                const esporteSelect = document.getElementById("esporteSelect");
                 for (let i = 0; i < esporteSelect.options.length; i++) {
                     if (esporteSelect.options[i].value === preferencia) {
                         esporteSelect.selectedIndex = i;
@@ -839,8 +823,13 @@
                         break;
                     }
                 }
+            } else {
+                document.getElementById("preferenceWarning").innerHTML = pref ? `⭐ ${pref.message}` : "🎉 Sexta: qualquer modalidade é bem-vinda!";
+                document.getElementById("esporteSelect").disabled = false;
             }
             
+            document.getElementById("modalDateInfo").innerHTML = `📅 ${dia}/05/2026`;
+            document.getElementById("modalError").innerText = "";
             document.getElementById("matchModal").style.display = "flex";
         }
         
@@ -882,16 +871,12 @@
             if (matchToCancel) {
                 const result = await cancelarAmistoso(matchToCancel);
                 closeCancelModal();
-                if (result.ok) {
-                    alert(result.msg);
-                    await carregarDoGoogleSheets();
-                } else {
-                    alert(result.msg);
-                }
+                alert(result.msg);
+                if (result.ok) await carregarDoGoogleSheets();
             }
         }
         
-        // ==================== GERAR PDF ====================
+        // ==================== PDF ====================
         function gerarPDF() {
             if (allMatches.length === 0) {
                 alert("Nenhum amistoso para gerar PDF!");
@@ -904,26 +889,28 @@
                 const ehPref = isPreferencia(m.dia, m.esporte);
                 const tipo = ehPref ? "Preferência" : "Suplente";
                 const row = tbody.insertRow();
-                row.insertCell(0).innerHTML = `${m.dia}/04/${TARGET_YEAR}`;
+                row.insertCell(0).innerHTML = `${m.dia}/05/${TARGET_YEAR}`;
                 row.insertCell(1).innerHTML = m.turma_1;
                 row.insertCell(2).innerHTML = m.turma_2;
                 row.insertCell(3).innerHTML = m.esporte;
                 row.insertCell(4).innerHTML = tipo;
             }
             const element = document.getElementById("pdfContent");
-            html2pdf().set({ margin: 0.5, filename: `amistosos_abril_${TARGET_YEAR}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' } }).from(element).save();
+            html2pdf().set({ margin: 0.5, filename: `amistosos_maio_${TARGET_YEAR}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' } }).from(element).save();
         }
         
         // ==================== INICIALIZAÇÃO ====================
         function init() {
             carregarDoGoogleSheets();
             setInterval(() => carregarDoGoogleSheets(), 30000);
+            
             document.getElementById("cancelModalBtn").addEventListener("click", closeModal);
             document.getElementById("confirmMatchBtn").addEventListener("click", confirmMatch);
             document.getElementById("confirmCancelBtn").addEventListener("click", executeCancel);
             document.getElementById("keepMatchBtn").addEventListener("click", closeCancelModal);
             document.getElementById("btnGerarPDF").addEventListener("click", gerarPDF);
             document.getElementById("btnAtualizar").addEventListener("click", () => carregarDoGoogleSheets());
+            
             window.addEventListener("click", (e) => {
                 if (e.target === document.getElementById("matchModal")) closeModal();
                 if (e.target === document.getElementById("confirmCancelModal")) closeCancelModal();
