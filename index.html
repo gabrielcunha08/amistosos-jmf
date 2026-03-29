@@ -2,42 +2,31 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes, viewport-fit=cover">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     <title>Grêmio JMF - Amistosos • Maio 2026</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: system-ui, 'Segoe UI', 'Roboto', sans-serif;
+            font-family: system-ui, sans-serif;
         }
 
         body {
             background: #0a0f0f;
             color: #e2e8f0;
             padding: 1rem;
-            min-height: 100vh;
-        }
-
-        .app-container {
-            max-width: 1400px;
-            margin: 0 auto;
         }
 
         .header {
             text-align: center;
             margin-bottom: 2rem;
-            padding: 1rem 0;
-            border-bottom: 2px solid #2e7d64;
+            padding: 1rem;
+            border-bottom: 2px solid #2ecc71;
         }
 
         .header h1 {
-            font-size: 1.8rem;
-            background: linear-gradient(135deg, #b9f6ca, #2ecc71);
-            background-clip: text;
-            -webkit-background-clip: text;
-            color: transparent;
+            color: #2ecc71;
         }
 
         .month-indicator {
@@ -48,44 +37,6 @@
             font-size: 0.9rem;
             margin-top: 8px;
             color: #2ecc71;
-            font-weight: bold;
-        }
-
-        .preference-badge {
-            background: #2c3e2e;
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.7rem;
-            margin-top: 8px;
-            color: #b9f6ca;
-        }
-
-        .actions-bar {
-            display: flex;
-            justify-content: center;
-            gap: 1rem;
-            margin: 1rem 0;
-            flex-wrap: wrap;
-        }
-
-        .btn-pdf, .btn-refresh {
-            border: none;
-            padding: 10px 20px;
-            border-radius: 40px;
-            font-weight: bold;
-            font-size: 0.9rem;
-            cursor: pointer;
-        }
-
-        .btn-pdf {
-            background: #e74c3c;
-            color: white;
-        }
-
-        .btn-refresh {
-            background: #2ecc71;
-            color: #0a0f0f;
         }
 
         .status-bar {
@@ -98,49 +49,26 @@
             text-align: center;
         }
 
-        .status-bar.connected {
-            color: #2ecc71;
-            background: #1a3a2a;
-        }
-
         .calendar-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
-            gap: 1.2rem;
+            gap: 1rem;
             margin-top: 1rem;
         }
 
         .day-card {
             background: #11181c;
-            border-radius: 1.5rem;
+            border-radius: 1rem;
             padding: 1rem;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.4);
-            border-left: 4px solid #2ecc71;
-            display: flex;
-            flex-direction: column;
-        }
-
-        .day-card.occupied-preferencia {
             border-left: 4px solid #2ecc71;
         }
 
-        .day-card.occupied-suplente {
+        .day-card.ocupado-preferencia {
+            border-left: 4px solid #2ecc71;
+        }
+
+        .day-card.ocupado-suplente {
             border-left: 4px solid #f1c40f;
-        }
-
-        .day-card:hover {
-            transform: translateY(-3px);
-            background: #15232b;
-        }
-
-        .day-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: baseline;
-            flex-wrap: wrap;
-            margin-bottom: 12px;
-            border-bottom: 1px dashed #2c3e2f;
-            padding-bottom: 6px;
         }
 
         .day-number {
@@ -149,52 +77,30 @@
             color: #2ecc71;
         }
 
-        .weekday {
-            font-size: 0.8rem;
-            background: #1e2a2a;
-            padding: 4px 10px;
-            border-radius: 40px;
-            color: #b9f6ca;
-        }
-
-        .pref-indicator {
+        .pref-badge {
             font-size: 0.65rem;
             background: #2c3e2e;
+            display: inline-block;
             padding: 2px 8px;
             border-radius: 20px;
-            margin-left: 8px;
+            margin-bottom: 8px;
             color: #f1c40f;
         }
 
-        .occupied-badge {
+        .tipo-badge {
             font-size: 0.65rem;
             padding: 2px 8px;
             border-radius: 20px;
             margin-left: 8px;
         }
-
-        .badge-preferencia {
-            background: #2ecc71;
-            color: #0a0f0f;
-        }
-
-        .badge-suplente {
-            background: #f1c40f;
-            color: #0a0f0f;
-        }
-
-        .matches-list {
-            flex: 1;
-            min-height: 90px;
-            margin: 12px 0;
-        }
+        .tipo-preferencia { background: #2ecc71; color: #0a0f0f; }
+        .tipo-suplente { background: #f1c40f; color: #0a0f0f; }
 
         .match-item {
             background: #0e1a1f;
             border-radius: 14px;
             padding: 10px;
-            font-size: 0.75rem;
-            border-left: 3px solid #2ecc71;
+            margin-top: 10px;
         }
 
         .match-item.suplente {
@@ -211,16 +117,15 @@
         }
 
         .match-teams {
-            font-weight: 500;
             color: #d1f2eb;
-            font-size: 0.8rem;
+            font-weight: 500;
         }
 
         .match-sport {
-            font-size: 0.7rem;
             background: #2c3e2e;
             padding: 2px 8px;
             border-radius: 20px;
+            font-size: 0.7rem;
         }
 
         .match-sport.suplente {
@@ -245,33 +150,23 @@
             cursor: pointer;
             width: 100%;
             margin-top: 8px;
-            transition: 0.2s;
         }
 
         .btn-cancel-match:hover {
             background: #e74c3c;
         }
 
-        .empty-matches {
-            color: #5f7f6e;
-            font-size: 0.75rem;
-            text-align: center;
-            padding: 10px;
-            font-style: italic;
-        }
-
         .btn-marcar {
             background: #1f3a34;
             border: none;
-            padding: 8px 0;
+            padding: 10px;
             border-radius: 40px;
             font-weight: bold;
             color: #b9f6ca;
-            font-size: 0.8rem;
+            font-size: 0.9rem;
             cursor: pointer;
-            margin-top: 8px;
             width: 100%;
-            transition: 0.2s;
+            margin-top: 10px;
         }
 
         .btn-marcar:hover:not(:disabled) {
@@ -284,31 +179,31 @@
             cursor: not-allowed;
         }
 
-        .modal, .confirm-modal {
+        .modal {
             display: none;
             position: fixed;
             top: 0;
             left: 0;
             width: 100%;
             height: 100%;
-            background: rgba(0, 0, 0, 0.85);
-            backdrop-filter: blur(4px);
+            background: rgba(0, 0, 0, 0.9);
             align-items: center;
             justify-content: center;
             z-index: 1000;
         }
 
-        .modal-content, .confirm-modal-content {
+        .modal-content {
             background: #0f1a1c;
             border-radius: 2rem;
             width: 90%;
             max-width: 400px;
-            padding: 1.6rem;
+            padding: 2rem;
             border-top: 4px solid #2ecc71;
         }
 
-        .confirm-modal-content {
-            border-top-color: #e74c3c;
+        .modal-content h3 {
+            color: #2ecc71;
+            margin-bottom: 1rem;
             text-align: center;
         }
 
@@ -316,7 +211,7 @@
             background: #2c3e2e;
             padding: 8px;
             border-radius: 16px;
-            margin: 15px 0;
+            margin-bottom: 15px;
             font-size: 0.75rem;
             text-align: center;
             color: #f1c40f;
@@ -335,23 +230,22 @@
 
         select {
             width: 100%;
-            padding: 10px 12px;
+            padding: 10px;
             background: #1e2f2c;
             border: 1px solid #2e7d64;
             border-radius: 28px;
             color: white;
             font-size: 0.9rem;
             outline: none;
-            cursor: pointer;
         }
 
-        .modal-buttons, .confirm-buttons {
+        .modal-buttons {
             display: flex;
             gap: 12px;
             margin-top: 20px;
         }
 
-        .modal-buttons button, .confirm-buttons button {
+        .modal-buttons button {
             flex: 1;
             padding: 10px;
             border-radius: 40px;
@@ -378,8 +272,23 @@
         .error-msg {
             color: #e67e22;
             font-size: 0.7rem;
-            margin-top: 6px;
             text-align: center;
+            margin-top: 8px;
+        }
+
+        .weekday {
+            font-size: 0.8rem;
+            background: #1e2a2a;
+            padding: 4px 10px;
+            border-radius: 40px;
+            display: inline-block;
+        }
+
+        .day-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
         }
 
         footer {
@@ -387,82 +296,32 @@
             margin-top: 2rem;
             font-size: 0.7rem;
             color: #3e6b5c;
-            padding: 1rem;
         }
 
-        @media (max-width: 640px) {
-            body { padding: 0.8rem; }
-            .day-card { padding: 0.8rem; }
-        }
-
-        .loading {
+        .empty-matches {
+            color: #5f7f6e;
             text-align: center;
-            padding: 2rem;
-            color: #2ecc71;
-        }
-
-        .pdf-container {
-            display: none;
-        }
-
-        .pdf-content {
-            padding: 2rem;
-            font-family: Arial, sans-serif;
-            background: white;
-            color: black;
-        }
-
-        .pdf-table {
-            width: 100%;
-            border-collapse: collapse;
-        }
-
-        .pdf-table th, .pdf-table td {
-            border: 1px solid #ddd;
-            padding: 8px;
-            text-align: left;
-        }
-
-        .pdf-table th {
-            background: #2ecc71;
-            color: white;
+            padding: 10px;
+            font-style: italic;
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <div class="header">
-            <h1>⚽ Grêmio JMF - Amistosos</h1>
-            <div class="month-indicator">📅 Maio 2026</div>
-            <div class="preference-badge">
-                🏆 Seg: Futsal Masc | Ter: Carimba | Qua: Futsal Fem | Qui: Vôlei | Sex: Rodízio
-            </div>
-            <div class="actions-bar">
-                <button class="btn-pdf" id="btnGerarPDF">📄 Gerar PDF</button>
-                <button class="btn-refresh" id="btnAtualizar">🔄 Atualizar</button>
-            </div>
-            <div id="connectionStatus" class="status-bar">🔄 Carregando dados...</div>
-        </div>
-
-        <div id="calendarContainer" class="calendar-grid">
-            <div class="loading">🔄 Carregando calendário...</div>
-        </div>
-        
-        <footer>
-            ✅ Clique no botão "Marcar Amistoso" para agendar um jogo
-        </footer>
+    <div class="header">
+        <h1>⚽ Grêmio JMF - Amistosos</h1>
+        <div class="month-indicator">📅 Maio 2026</div>
+        <div style="margin-top: 10px; font-size: 0.8rem;">🏆 Seg: Futsal Masc | Ter: Carimba | Qua: Futsal Fem | Qui: Vôlei | Sex: Rodízio</div>
+        <div id="statusBar" class="status-bar">🔄 Carregando dados...</div>
     </div>
 
-    <div id="pdfContainer" class="pdf-container">
-        <div id="pdfContent" class="pdf-content">
-            <h1>⚽ Grêmio JMF - Amistosos</h1>
-            <table class="pdf-table" id="pdfTable">
-                <thead>…
-<th>Data</th><th>Turma 1</th><th>Turma 2</th><th>Modalidade</th><th>Tipo</th></thead>
-                <tbody id="pdfTableBody"></tbody>
-            ……
-        </div>
+    <div id="calendarContainer" class="calendar-grid">
+        <div style="text-align: center; padding: 2rem;">🔄 Carregando calendário...</div>
     </div>
+
+    <footer>
+        🟢 Amarelo = SUPLENTE | Verde = PREFERÊNCIA<br>
+        🗑️ Clique em "Cancelar Amistoso" para remover um jogo
+    </footer>
 
     <div id="matchModal" class="modal">
         <div class="modal-content">
@@ -495,11 +354,11 @@
         </div>
     </div>
 
-    <div id="confirmCancelModal" class="confirm-modal">
-        <div class="confirm-modal-content">
-            <h4>⚠️ Cancelar Amistoso</h4>
+    <div id="confirmCancelModal" class="modal">
+        <div class="modal-content" style="border-top-color:#e74c3c; text-align:center;">
+            <h4 style="color:#e74c3c;">⚠️ Cancelar Amistoso</h4>
             <p id="cancelMatchInfo" style="margin: 10px 0;"></p>
-            <div class="confirm-buttons">
+            <div class="modal-buttons">
                 <button class="btn-cancel" id="keepMatchBtn">Manter</button>
                 <button class="btn-confirm-cancel" id="confirmCancelBtn">Cancelar</button>
             </div>
@@ -518,7 +377,7 @@
             2: { sport: "Carimba", message: "🥇 Terça: PREFERÊNCIA é Carimba" },
             3: { sport: "Futsal feminino", message: "🥇 Quarta: PREFERÊNCIA é Futsal Feminino" },
             4: { sport: "Vôlei", message: "🥇 Quinta: PREFERÊNCIA é Vôlei" },
-            5: { sport: null, message: "🎉 Sexta: Rodízio livre - todos são preferência!" }
+            5: { sport: null, message: "🎉 Sexta: Rodízio livre - qualquer modalidade!" }
         };
         
         const TURMAS = [
@@ -531,9 +390,10 @@
         let selectedDay = null;
         let matchToCancel = null;
         
-        // ==================== FUNÇÕES DO GOOGLE SHEETS ====================
-        async function carregarDoGoogleSheets() {
+        // ==================== FUNÇÕES ====================
+        async function carregarDados() {
             try {
+                document.getElementById("statusBar").innerHTML = "🔄 Carregando...";
                 const response = await fetch(SCRIPT_URL);
                 const data = await response.json();
                 
@@ -554,20 +414,18 @@
                         }
                     }
                 }
-                
                 allMatches = allMatches.filter(m => m.mes === TARGET_MONTH && m.ano === TARGET_YEAR);
-                document.getElementById("connectionStatus").innerHTML = "🟢 Conectado - " + allMatches.length + " amistosos";
-                document.getElementById("connectionStatus").className = "status-bar connected";
-                renderCalendar();
-                return true;
+                document.getElementById("statusBar").innerHTML = "🟢 Conectado - " + allMatches.length + " amistosos";
+                renderizarCalendario();
             } catch (error) {
                 console.error("Erro:", error);
-                document.getElementById("connectionStatus").innerHTML = "⚠️ Erro de conexão";
-                return false;
+                document.getElementById("statusBar").innerHTML = "⚠️ Offline - usando dados locais";
+                allMatches = [];
+                renderizarCalendario();
             }
         }
         
-        async function salvarNoGoogleSheets(match, isDelete = false) {
+        async function salvarDados(match, isDelete = false) {
             try {
                 const formData = new FormData();
                 formData.append('action', isDelete ? 'delete' : 'add');
@@ -583,23 +441,23 @@
                 const result = await response.json();
                 return result.success === true;
             } catch (error) {
+                console.error("Erro ao salvar:", error);
                 return false;
             }
         }
         
-        // ==================== FUNÇÕES AUXILIARES ====================
-        function getPreferenceForDay(dia) {
+        function getPreferenciaDia(dia) {
             const data = new Date(TARGET_YEAR, TARGET_MONTH, dia);
             return PREFERENCE_BY_DAY[data.getDay()] || null;
         }
         
         function isPreferencia(dia, esporte) {
-            const pref = getPreferenceForDay(dia);
+            const pref = getPreferenciaDia(dia);
             if (!pref || !pref.sport) return true;
             return esporte === pref.sport;
         }
         
-        function getAmistosoDoDia(dia) {
+        function getJogoDia(dia) {
             return allMatches.find(m => m.dia === dia);
         }
         
@@ -611,13 +469,13 @@
             return 1 + Math.round(((d - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
         }
         
-        function turmaExcedeuLimiteSemanal(turma, dataJogo, ignoreId = null) {
-            const semanaAlvo = getWeekNumber(dataJogo);
+        function turmaExcedeuLimite(turma, dataJogo, ignoreId = null) {
+            const semana = getWeekNumber(dataJogo);
             let count = 0;
             for (let m of allMatches) {
                 if (ignoreId && m.id === ignoreId) continue;
                 const dataMatch = new Date(m.ano, m.mes, m.dia);
-                if (getWeekNumber(dataMatch) === semanaAlvo) {
+                if (getWeekNumber(dataMatch) === semana) {
                     if (m.turma_1 === turma || m.turma_2 === turma) {
                         count++;
                         if (count >= 2) return true;
@@ -627,74 +485,167 @@
             return false;
         }
         
-        function validarAmistoso(dia, turma1, turma2) {
+        function validarJogo(dia, turma1, turma2, ignoreId = null) {
             if (turma1 === turma2) return { ok: false, msg: "❌ Não pode jogar contra si mesmo!" };
             const dataJogo = new Date(TARGET_YEAR, TARGET_MONTH, dia);
-            if (turmaExcedeuLimiteSemanal(turma1, dataJogo)) {
+            if (turmaExcedeuLimite(turma1, dataJogo, ignoreId)) {
                 return { ok: false, msg: `⚠️ ${turma1} já tem 2 jogos nesta semana!` };
             }
-            if (turmaExcedeuLimiteSemanal(turma2, dataJogo)) {
+            if (turmaExcedeuLimite(turma2, dataJogo, ignoreId)) {
                 return { ok: false, msg: `⚠️ ${turma2} já tem 2 jogos nesta semana!` };
             }
             return { ok: true };
         }
         
-        // ==================== FUNÇÃO MARCAR ====================
-        async function marcarAmistoso(dia, turma1, turma2, esporte) {
-            const jogoExistente = getAmistosoDoDia(dia);
-            const ehPreferencia = isPreferencia(dia, esporte);
-            const prefDoDia = getPreferenceForDay(dia);
+        // ==================== FUNÇÃO PRINCIPAL DE MARCAR ====================
+        async function marcarJogo(dia, turma1, turma2, esporte) {
+            const jogoExistente = getJogoDia(dia);
+            const ehPref = isPreferencia(dia, esporte);
+            const prefDia = getPreferenciaDia(dia);
             
             if (jogoExistente) {
-                const jogoExistenteEhPreferencia = isPreferencia(dia, jogoExistente.esporte);
+                const jogoEhPref = isPreferencia(dia, jogoExistente.esporte);
                 
-                if (jogoExistenteEhPreferencia) {
-                    return { ok: false, msg: `❌ Este dia já tem PREFERÊNCIA (${prefDoDia?.sport}).` };
+                if (jogoEhPref) {
+                    return { ok: false, msg: `❌ Este dia já tem PREFERÊNCIA (${prefDia?.sport})` };
                 }
                 
-                if (!jogoExistenteEhPreferencia && ehPreferencia) {
-                    await salvarNoGoogleSheets(jogoExistente, true);
+                if (!jogoEhPref && ehPref) {
+                    // Substituir suplente por preferência
+                    const deleteSuccess = await salvarDados(jogoExistente, true);
+                    if (!deleteSuccess) {
+                        return { ok: false, msg: "❌ Erro ao remover o suplente" };
+                    }
                     allMatches = allMatches.filter(m => m.id !== jogoExistente.id);
                     
-                    const novoMatch = { id: Date.now().toString(), dia, mes: TARGET_MONTH, ano: TARGET_YEAR, turma_1: turma1, turma_2: turma2, esporte };
-                    await salvarNoGoogleSheets(novoMatch);
-                    allMatches.push(novoMatch);
-                    return { ok: true, msg: `🟢 Substituído por ${esporte} (PREFERÊNCIA)!` };
+                    const novoJogo = { id: Date.now().toString(), dia, mes: TARGET_MONTH, ano: TARGET_YEAR, turma_1: turma1, turma_2: turma2, esporte };
+                    const addSuccess = await salvarDados(novoJogo);
+                    if (!addSuccess) {
+                        return { ok: false, msg: "❌ Erro ao adicionar a preferência" };
+                    }
+                    allMatches.push(novoJogo);
+                    return { ok: true, msg: `🟢 Substituído! Agora é ${esporte} (PREFERÊNCIA)!` };
                 }
                 
-                return { ok: false, msg: `❌ Só pode substituir pela PREFERÊNCIA (${prefDoDia?.sport}).` };
+                return { ok: false, msg: `❌ Só pode substituir pela PREFERÊNCIA (${prefDia?.sport})` };
             }
             
-            const validation = validarAmistoso(dia, turma1, turma2);
-            if (!validation.ok) return validation;
+            // Dia vazio
+            const validacao = validarJogo(dia, turma1, turma2);
+            if (!validacao.ok) return validacao;
             
-            const novoMatch = { id: Date.now().toString(), dia, mes: TARGET_MONTH, ano: TARGET_YEAR, turma_1: turma1, turma_2: turma2, esporte };
-            const success = await salvarNoGoogleSheets(novoMatch);
-            if (!success) return { ok: false, msg: "❌ Erro ao salvar." };
+            const novoJogo = { id: Date.now().toString(), dia, mes: TARGET_MONTH, ano: TARGET_YEAR, turma_1: turma1, turma_2: turma2, esporte };
+            const sucesso = await salvarDados(novoJogo);
+            if (!sucesso) return { ok: false, msg: "❌ Erro ao salvar" };
             
-            allMatches.push(novoMatch);
-            const tipo = ehPreferencia ? "PREFERÊNCIA" : "SUPLENTE";
+            allMatches.push(novoJogo);
+            const tipo = ehPref ? "PREFERÊNCIA" : "SUPLENTE";
             return { ok: true, msg: `✅ Amistoso marcado como ${tipo}!` };
         }
         
-        // ==================== FUNÇÃO CANCELAR ====================
-        async function cancelarAmistoso(matchId) {
-            const match = allMatches.find(m => m.id === matchId);
-            if (!match) return { ok: false, msg: "Amistoso não encontrado!" };
+        // ==================== FUNÇÃO DE CANCELAR ====================
+        async function cancelarJogo(matchId) {
+            const jogo = allMatches.find(m => m.id === matchId);
+            if (!jogo) return { ok: false, msg: "Jogo não encontrado!" };
             
-            const success = await salvarNoGoogleSheets(match, true);
-            if (success) {
+            const sucesso = await salvarDados(jogo, true);
+            if (sucesso) {
                 allMatches = allMatches.filter(m => m.id !== matchId);
                 return { ok: true, msg: "✅ Cancelado com sucesso!" };
             }
-            return { ok: false, msg: "❌ Erro ao cancelar." };
+            return { ok: false, msg: "❌ Erro ao cancelar" };
         }
         
-        // ==================== RENDERIZAÇÃO ====================
-        function renderCalendar() {
-            const container = document.getElementById("calendarContainer");
-            if (!container) return;
+        // ==================== FUNÇÕES DO MODAL ====================
+        function preencherSelects() {
+            const turma1Sel = document.getElementById("turma1Select");
+            const turma2Sel = document.getElementById("turma2Select");
+            turma1Sel.innerHTML = "";
+            turma2Sel.innerHTML = "";
+            TURMAS.forEach(t => {
+                turma1Sel.innerHTML += `<option value="${t}">${t}</option>`;
+                turma2Sel.innerHTML += `<option value="${t}">${t}</option>`;
+            });
+        }
+        
+        // FUNÇÕES GLOBAIS PARA ONCLICK
+        window.abrirModal = function(dia) {
+            console.log("Abrindo modal dia:", dia);
+            selectedDay = dia;
+            preencherSelects();
             
+            const pref = getPreferenciaDia(dia);
+            document.getElementById("preferenceWarning").innerHTML = pref ? `⭐ ${pref.message}` : "🎉 Sexta: qualquer modalidade!";
+            document.getElementById("esporteSelect").disabled = false;
+            document.getElementById("modalDateInfo").innerHTML = `📅 ${dia}/05/2026`;
+            document.getElementById("modalError").innerHTML = "";
+            document.getElementById("matchModal").style.display = "flex";
+        };
+        
+        window.abrirModalSubstituir = function(dia, pref) {
+            console.log("Abrindo modal substituir dia:", dia);
+            selectedDay = dia;
+            preencherSelects();
+            
+            document.getElementById("preferenceWarning").innerHTML = `🟡 Substituir SUPLENTE pela PREFERÊNCIA: <strong>${pref}</strong>`;
+            const esporteSelect = document.getElementById("esporteSelect");
+            for (let i = 0; i < esporteSelect.options.length; i++) {
+                if (esporteSelect.options[i].value === pref) {
+                    esporteSelect.selectedIndex = i;
+                    esporteSelect.disabled = true;
+                    break;
+                }
+            }
+            document.getElementById("modalDateInfo").innerHTML = `📅 ${dia}/05/2026`;
+            document.getElementById("modalError").innerHTML = "";
+            document.getElementById("matchModal").style.display = "flex";
+        };
+        
+        window.abrirCancelModal = function(matchId, matchInfo) {
+            matchToCancel = matchId;
+            document.getElementById("cancelMatchInfo").innerHTML = `Cancelar: <strong>${matchInfo}</strong>?`;
+            document.getElementById("confirmCancelModal").style.display = "flex";
+        };
+        
+        function closeModal() {
+            document.getElementById("matchModal").style.display = "none";
+            selectedDay = null;
+            document.getElementById("esporteSelect").disabled = false;
+        }
+        
+        function closeCancelModal() {
+            document.getElementById("confirmCancelModal").style.display = "none";
+            matchToCancel = null;
+        }
+        
+        async function confirmarJogo() {
+            if (!selectedDay) return;
+            const turma1 = document.getElementById("turma1Select").value;
+            const turma2 = document.getElementById("turma2Select").value;
+            const esporte = document.getElementById("esporteSelect").value;
+            
+            const resultado = await marcarJogo(selectedDay, turma1, turma2, esporte);
+            if (!resultado.ok) {
+                document.getElementById("modalError").innerHTML = resultado.msg;
+                return;
+            }
+            closeModal();
+            await carregarDados();
+            alert(resultado.msg);
+        }
+        
+        async function executarCancel() {
+            if (matchToCancel) {
+                const resultado = await cancelarJogo(matchToCancel);
+                closeCancelModal();
+                alert(resultado.msg);
+                if (resultado.ok) await carregarDados();
+            }
+        }
+        
+        // ==================== RENDERIZAR CALENDÁRIO ====================
+        function renderizarCalendario() {
+            const container = document.getElementById("calendarContainer");
             const diasNoMes = new Date(TARGET_YEAR, TARGET_MONTH + 1, 0).getDate();
             let diasUteis = [];
             for (let d = 1; d <= diasNoMes; d++) {
@@ -707,36 +658,25 @@
             for (let dia of diasUteis) {
                 const dataAtual = new Date(TARGET_YEAR, TARGET_MONTH, dia);
                 const weekShort = dataAtual.toLocaleDateString('pt-BR', { weekday: 'short' }).replace('.', '');
-                const jogo = getAmistosoDoDia(dia);
-                const pref = getPreferenceForDay(dia);
-                const ehPreferencia = jogo ? isPreferencia(dia, jogo.esporte) : false;
+                const jogo = getJogoDia(dia);
+                const pref = getPreferenciaDia(dia);
+                const ehPref = jogo ? isPreferencia(dia, jogo.esporte) : false;
                 
-                const card = document.createElement("div");
-                card.className = "day-card";
+                let tipoBadge = '';
                 if (jogo) {
-                    card.classList.add(ehPreferencia ? "occupied-preferencia" : "occupied-suplente");
-                }
-                
-                let prefHtml = pref?.sport ? `<span class="pref-indicator">⭐ ${pref.sport}</span>` : 
-                               (pref ? `<span class="pref-indicator">🎲 Rodízio</span>` : "");
-                
-                let badgeHtml = '';
-                if (jogo) {
-                    badgeHtml = `<span class="occupied-badge ${ehPreferencia ? 'badge-preferencia' : 'badge-suplente'}">
-                        ${ehPreferencia ? '⭐ PREFERÊNCIA' : '🟡 SUPLENTE'}
-                    </span>`;
+                    tipoBadge = `<span class="tipo-badge ${ehPref ? 'tipo-preferencia' : 'tipo-suplente'}">${ehPref ? '⭐ PREFERÊNCIA' : '🟡 SUPLENTE'}</span>`;
                 }
                 
                 let matchHtml = '';
                 if (jogo) {
                     matchHtml = `
-                        <div class="match-item ${!ehPreferencia ? 'suplente' : ''}">
+                        <div class="match-item ${!ehPref ? 'suplente' : ''}">
                             <div class="match-text">
                                 <span class="match-teams">${jogo.turma_1} 🆚 ${jogo.turma_2}</span>
-                                <span class="match-sport ${!ehPreferencia ? 'suplente' : ''}">${jogo.esporte}</span>
-                                ${!ehPreferencia ? '<span class="suplente-tag">(suplente)</span>' : ''}
+                                <span class="match-sport ${!ehPref ? 'suplente' : ''}">${jogo.esporte}</span>
+                                ${!ehPref ? '<span class="suplente-tag">(suplente)</span>' : ''}
                             </div>
-                            <button class="btn-cancel-match" data-id="${jogo.id}" data-info="${jogo.turma_1} vs ${jogo.turma_2} - ${jogo.esporte}">
+                            <button class="btn-cancel-match" onclick="abrirCancelModal('${jogo.id}', '${jogo.turma_1} vs ${jogo.turma_2} - ${jogo.esporte}')">
                                 🗑️ Cancelar Amistoso
                             </button>
                         </div>
@@ -746,178 +686,44 @@
                 }
                 
                 let btnHtml = '';
-                if (jogo && ehPreferencia) {
-                    btnHtml = `<button class="btn-marcar" disabled>🔒 Preferência</button>`;
-                } else if (jogo && !ehPreferencia) {
-                    btnHtml = `<button class="btn-marcar btn-substituir" data-dia="${dia}" data-pref="${pref?.sport || ''}">🔄 Substituir por Preferência?</button>`;
+                if (jogo && ehPref) {
+                    btnHtml = `<button class="btn-marcar" disabled style="opacity:0.5">🔒 Preferência</button>`;
+                } else if (jogo && !ehPref) {
+                    btnHtml = `<button class="btn-marcar" onclick="abrirModalSubstituir(${dia}, '${pref?.sport || ''}')">🔄 Substituir por Preferência?</button>`;
                 } else {
-                    btnHtml = `<button class="btn-marcar btn-novo" data-dia="${dia}">📆 Marcar Amistoso</button>`;
+                    btnHtml = `<button class="btn-marcar" onclick="abrirModal(${dia})">📆 Marcar Amistoso</button>`;
                 }
                 
+                const card = document.createElement("div");
+                card.className = `day-card ${jogo ? (ehPref ? 'ocupado-preferencia' : 'ocupado-suplente') : ''}`;
                 card.innerHTML = `
                     <div class="day-header">
-                        <div style="display: flex; gap: 6px; flex-wrap: wrap; align-items: center;">
-                            <span class="day-number">${dia}</span>
-                            ${prefHtml}
-                            ${badgeHtml}
-                        </div>
+                        <span class="day-number">${dia}</span>
                         <span class="weekday">${weekShort}</span>
                     </div>
-                    <div class="matches-list">${matchHtml}</div>
+                    ${pref?.sport ? `<div class="pref-badge">⭐ ${pref.sport}</div>` : ''}
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        ${tipoBadge}
+                    </div>
+                    ${matchHtml}
                     ${btnHtml}
                 `;
-                
                 container.appendChild(card);
             }
-            
-            // Adicionar eventos dos botões
-            document.querySelectorAll('.btn-novo').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const dia = parseInt(btn.dataset.dia);
-                    abrirModal(dia, false);
-                });
-            });
-            
-            document.querySelectorAll('.btn-substituir').forEach(btn => {
-                btn.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    const dia = parseInt(btn.dataset.dia);
-                    const pref = btn.dataset.pref;
-                    abrirModal(dia, true, pref);
-                });
-            });
-            
-            document.querySelectorAll('.btn-cancel-match').forEach(btn => {
-                btn.addEventListener('click', async (e) => {
-                    e.stopPropagation();
-                    const matchId = btn.dataset.id;
-                    const matchInfo = btn.dataset.info;
-                    abrirCancelModal(matchId, matchInfo);
-                });
-            });
-        }
-        
-        // ==================== MODAL ====================
-        function abrirModal(dia, isSubstituir = false, preferencia = null) {
-            selectedDay = dia;
-            
-            const turma1Sel = document.getElementById("turma1Select");
-            const turma2Sel = document.getElementById("turma2Select");
-            turma1Sel.innerHTML = "";
-            turma2Sel.innerHTML = "";
-            TURMAS.forEach(t => {
-                turma1Sel.innerHTML += `<option value="${t}">${t}</option>`;
-                turma2Sel.innerHTML += `<option value="${t}">${t}</option>`;
-            });
-            
-            const pref = getPreferenceForDay(dia);
-            
-            if (isSubstituir && preferencia) {
-                document.getElementById("preferenceWarning").innerHTML = `🟡 Substituir SUPLENTE pela PREFERÊNCIA: <strong>${preferencia}</strong>`;
-                const esporteSelect = document.getElementById("esporteSelect");
-                for (let i = 0; i < esporteSelect.options.length; i++) {
-                    if (esporteSelect.options[i].value === preferencia) {
-                        esporteSelect.selectedIndex = i;
-                        esporteSelect.disabled = true;
-                        break;
-                    }
-                }
-            } else {
-                document.getElementById("preferenceWarning").innerHTML = pref ? `⭐ ${pref.message}` : "🎉 Sexta: qualquer modalidade é bem-vinda!";
-                document.getElementById("esporteSelect").disabled = false;
-            }
-            
-            document.getElementById("modalDateInfo").innerHTML = `📅 ${dia}/05/2026`;
-            document.getElementById("modalError").innerText = "";
-            document.getElementById("matchModal").style.display = "flex";
-        }
-        
-        function closeModal() {
-            document.getElementById("matchModal").style.display = "none";
-            selectedDay = null;
-            document.getElementById("esporteSelect").disabled = false;
-            document.getElementById("modalError").innerText = "";
-        }
-        
-        async function confirmMatch() {
-            if (!selectedDay) return;
-            const turma1 = document.getElementById("turma1Select").value;
-            const turma2 = document.getElementById("turma2Select").value;
-            const esporte = document.getElementById("esporteSelect").value;
-            
-            const result = await marcarAmistoso(selectedDay, turma1, turma2, esporte);
-            if (!result.ok) {
-                document.getElementById("modalError").innerText = result.msg;
-                return;
-            }
-            closeModal();
-            await carregarDoGoogleSheets();
-            alert(result.msg);
-        }
-        
-        function abrirCancelModal(matchId, matchInfo) {
-            matchToCancel = matchId;
-            document.getElementById("cancelMatchInfo").innerHTML = `Deseja cancelar:<br><strong>${matchInfo}</strong>?`;
-            document.getElementById("confirmCancelModal").style.display = "flex";
-        }
-        
-        function closeCancelModal() {
-            document.getElementById("confirmCancelModal").style.display = "none";
-            matchToCancel = null;
-        }
-        
-        async function executeCancel() {
-            if (matchToCancel) {
-                const result = await cancelarAmistoso(matchToCancel);
-                closeCancelModal();
-                alert(result.msg);
-                if (result.ok) await carregarDoGoogleSheets();
-            }
-        }
-        
-        // ==================== PDF ====================
-        function gerarPDF() {
-            if (allMatches.length === 0) {
-                alert("Nenhum amistoso para gerar PDF!");
-                return;
-            }
-            const tbody = document.getElementById("pdfTableBody");
-            tbody.innerHTML = "";
-            const matchesOrdenados = [...allMatches].sort((a, b) => a.dia - b.dia);
-            for (let m of matchesOrdenados) {
-                const ehPref = isPreferencia(m.dia, m.esporte);
-                const tipo = ehPref ? "Preferência" : "Suplente";
-                const row = tbody.insertRow();
-                row.insertCell(0).innerHTML = `${m.dia}/05/${TARGET_YEAR}`;
-                row.insertCell(1).innerHTML = m.turma_1;
-                row.insertCell(2).innerHTML = m.turma_2;
-                row.insertCell(3).innerHTML = m.esporte;
-                row.insertCell(4).innerHTML = tipo;
-            }
-            const element = document.getElementById("pdfContent");
-            html2pdf().set({ margin: 0.5, filename: `amistosos_maio_${TARGET_YEAR}.pdf`, image: { type: 'jpeg', quality: 0.98 }, html2canvas: { scale: 2 }, jsPDF: { unit: 'in', format: 'a4', orientation: 'landscape' } }).from(element).save();
         }
         
         // ==================== INICIALIZAÇÃO ====================
-        function init() {
-            carregarDoGoogleSheets();
-            setInterval(() => carregarDoGoogleSheets(), 30000);
-            
-            document.getElementById("cancelModalBtn").addEventListener("click", closeModal);
-            document.getElementById("confirmMatchBtn").addEventListener("click", confirmMatch);
-            document.getElementById("confirmCancelBtn").addEventListener("click", executeCancel);
-            document.getElementById("keepMatchBtn").addEventListener("click", closeCancelModal);
-            document.getElementById("btnGerarPDF").addEventListener("click", gerarPDF);
-            document.getElementById("btnAtualizar").addEventListener("click", () => carregarDoGoogleSheets());
-            
-            window.addEventListener("click", (e) => {
-                if (e.target === document.getElementById("matchModal")) closeModal();
-                if (e.target === document.getElementById("confirmCancelModal")) closeCancelModal();
-            });
-        }
+        document.getElementById("cancelModalBtn").onclick = closeModal;
+        document.getElementById("confirmMatchBtn").onclick = confirmarJogo;
+        document.getElementById("confirmCancelBtn").onclick = executarCancel;
+        document.getElementById("keepMatchBtn").onclick = closeCancelModal;
         
-        init();
+        window.onclick = function(e) {
+            if (e.target === document.getElementById("matchModal")) closeModal();
+            if (e.target === document.getElementById("confirmCancelModal")) closeCancelModal();
+        };
+        
+        carregarDados();
     </script>
 </body>
 </html>
